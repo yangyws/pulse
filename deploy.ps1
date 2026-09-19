@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$ApkPath = "",
     [switch]$LaunchApp = $true
 )
