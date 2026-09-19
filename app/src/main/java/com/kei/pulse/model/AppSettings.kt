@@ -1,5 +1,7 @@
 package com.kei.pulse.model
 
+import com.kei.pulse.i18n.AppLanguage
+
 enum class AppColorSource {
     SYSTEM,
     CUSTOM_ACCENT,
@@ -91,6 +93,7 @@ enum class RgbStick(val label: String) {
 }
 
 data class AppSettings(
+    val appLanguage: AppLanguage = AppLanguage.SYSTEM,
     val themeId: PulseThemeId = PulseThemeId.SIGNAL,
     val colorSource: AppColorSource = AppColorSource.SYSTEM,
     val accentColor: Int = 0xFF3F51B5.toInt(),

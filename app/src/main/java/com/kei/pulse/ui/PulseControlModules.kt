@@ -68,6 +68,7 @@ import com.kei.pulse.data.RefreshRateController
 import com.kei.pulse.data.TelemetrySnapshot
 import com.kei.pulse.data.AutoTuneController
 import kotlinx.coroutines.delay
+import com.kei.pulse.i18n.LocalPulseStrings
 import com.kei.pulse.model.AutoTdpBias
 import com.kei.pulse.model.FanCurve
 import com.kei.pulse.model.FanCurveEditing
@@ -132,6 +133,13 @@ private fun TierCard(
     }
     val container = if (selected) accent.copy(alpha = 0.14f) else MaterialTheme.colorScheme.surfaceContainerHigh
     val borderColor = if (selected) accent else MaterialTheme.colorScheme.outline
+    val strings = LocalPulseStrings.current
+    val tierTitle = when (tier) {
+        PowerTier.POWER_SAVING -> strings.tierPowerSaving
+        PowerTier.BALANCED -> strings.tierBalanced
+        PowerTier.MAX -> strings.tierMax
+        PowerTier.CUSTOM -> strings.tierCustom
+    }
     Surface(
         color = container,
         shape = RoundedCornerShape(14.dp),
@@ -141,7 +149,7 @@ private fun TierCard(
     ) {
         Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp)) {
             Text(
-                text = tier.label,
+                text = tierTitle,
                 style = MaterialTheme.typography.titleMedium,
                 color = if (selected) accent else MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
@@ -190,8 +198,9 @@ fun FanModule(
     modifier: Modifier = Modifier,
     editor: FanCurveEditorBindings? = null,
 ) {
+    val strings = LocalPulseStrings.current
     Column(modifier = modifier.fillMaxWidth()) {
-        PulseSectionLabel("FAN · ${FanController.labelFor(currentMode).uppercase()}")
+        PulseSectionLabel("${strings.fanSectionTitle} · ${FanController.labelFor(currentMode).uppercase()}")
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -202,8 +211,15 @@ fun FanModule(
                 // The Custom chip only exists where PULSE can actually drive the PWM (Odin 3). On Thor/RP6
                 // `editor` is null, so Custom is hidden and those devices never reach the fallback path.
                 if (mode.value == FanController.CUSTOM && editor == null) return@forEach
+                val modeLabel = when (mode.value) {
+                    FanController.SILENT -> strings.fanModeQuiet
+                    FanController.SMART -> strings.fanModeSmart
+                    FanController.SPORT -> strings.fanModeMax
+                    FanController.CUSTOM -> strings.fanModeCustom
+                    else -> mode.label
+                }
                 PulseChip(
-                    label = mode.label,
+                    label = modeLabel,
                     selected = currentMode == mode.value,
                     accent = MaterialTheme.colorScheme.tertiary,
                     onClick = { onSelect(mode.value) },

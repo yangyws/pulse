@@ -47,6 +47,7 @@ import com.kei.pulse.model.PerformanceProfile
 import com.kei.pulse.model.PowerTier
 import com.kei.pulse.model.ProfileSource
 import com.kei.pulse.model.ProfileStateResolver
+import com.kei.pulse.i18n.LocalPulseStrings
 import com.kei.pulse.ui.theme.HudBackground
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -71,6 +72,7 @@ fun PerAppScreen(
     onRemoveConfig: (String) -> Unit,
     onBack: () -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     val context = LocalContext.current
     var apps by remember { mutableStateOf<List<InstalledApp>?>(null) }
     var editingApp by remember { mutableStateOf<InstalledApp?>(null) }
@@ -116,7 +118,7 @@ fun PerAppScreen(
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Per-app profiles",
+                        text = strings.perAppScreenTitle,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                     )
@@ -127,14 +129,14 @@ fun PerAppScreen(
                     )
                 }
                 TextButton(onClick = onBack) {
-                    Text("Done")
+                    Text(strings.done)
                 }
             }
 
             val loaded = apps
             if (loaded == null) {
                 Text(
-                    text = "Loading apps…",
+                    text = strings.loading,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -142,7 +144,7 @@ fun PerAppScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search apps") },
+                    placeholder = { Text(strings.searchAppsHint) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )

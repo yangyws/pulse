@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.kei.pulse.i18n.LocalPulseStrings
+import com.kei.pulse.i18n.resolvePulseStrings
 import com.kei.pulse.model.AppColorSource
 import com.kei.pulse.model.AppSettings
 import com.kei.pulse.model.PowerTier
@@ -176,7 +178,11 @@ fun PulseTheme(
         typography = PulseTypography,
         shapes = PulseShapes,
     ) {
-        CompositionLocalProvider(LocalPulseThemeId provides settings.themeId) {
+        val strings = resolvePulseStrings(settings.appLanguage)
+        CompositionLocalProvider(
+            LocalPulseThemeId provides settings.themeId,
+            LocalPulseStrings provides strings,
+        ) {
             content()
         }
     }

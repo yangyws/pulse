@@ -3,6 +3,7 @@ package com.kei.pulse.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.kei.pulse.i18n.AppLanguage
 import com.kei.pulse.data.DisplayController
 import com.kei.pulse.data.GovernorController
 import com.kei.pulse.data.GovernorOption
@@ -1157,6 +1158,12 @@ class TunerViewModel(
     fun setSleepProfile(profileId: String?) {
         viewModelScope.launch {
             settingsStorage.persistSleepProfileId(profileId)
+        }
+    }
+
+    fun setAppLanguage(language: AppLanguage) {
+        viewModelScope.launch {
+            settingsStorage.persistAppLanguage(language)
         }
     }
 

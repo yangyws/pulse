@@ -75,6 +75,7 @@ import com.kei.pulse.data.TelemetrySnapshot
 import com.kei.pulse.model.AutoTdpBias
 import com.kei.pulse.model.PowerTier
 import com.kei.pulse.ui.theme.HudBackground
+import com.kei.pulse.i18n.LocalPulseStrings
 import com.kei.pulse.model.CpuPolicyInfo
 import com.kei.pulse.model.PerformanceProfile
 import com.kei.pulse.model.ProfileStateResolver
@@ -139,6 +140,7 @@ fun MainTunerScreen(
     autoTdpBias: AutoTdpBias,
     onAutoTdpBiasChange: (AutoTdpBias) -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     var dialogProfileId by remember { mutableStateOf<String?>(null) }
 
     ScreenNotifications(
@@ -174,7 +176,7 @@ fun MainTunerScreen(
                 LoadingClustersCard()
             } else if (!state.isPServerAvailable) {
                 Text(
-                    text = "Your device is not compatible with this app",
+                    text = strings.unavailable,
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.SemiBold,
@@ -204,7 +206,7 @@ fun MainTunerScreen(
                     )
                 }
 
-                PulseSectionLabel("GLOBAL PERFORMANCE TIER")
+                PulseSectionLabel("${strings.powerTiersTitle} · TIER")
                 AutoTdpModule(
                     enabled = autoTdpEnabled,
                     onEnabledChange = onAutoTdpEnabledChange,
@@ -282,7 +284,7 @@ fun MainTunerScreen(
                         enabled = !(powerTargetEnabled && !powerTargetCpuOnly),
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("Apply manual limits")
+                        Text(strings.apply)
                     }
 
                     GpuFloorModule(
@@ -294,7 +296,7 @@ fun MainTunerScreen(
 
                     CpuFloorModule(currentPercent = cpuFloorPercent, onSelect = onSelectCpuFloor)
 
-                    PulseSectionLabel("SAVED SETUPS")
+                    PulseSectionLabel("${strings.profilesTitle} · SAVED SETUPS")
                     ProfileListSection(
                         state = state,
                         sleepProfileId = sleepProfileId,

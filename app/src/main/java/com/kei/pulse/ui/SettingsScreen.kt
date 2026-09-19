@@ -63,6 +63,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.kei.pulse.i18n.AppLanguage
+import com.kei.pulse.i18n.LocalPulseStrings
 import com.kei.pulse.model.AppColorSource
 import com.kei.pulse.model.OverlayElement
 import com.kei.pulse.model.OverlayPreset
@@ -95,6 +97,7 @@ fun SettingsScreen(
     onColorSourceChange: (AppColorSource) -> Unit,
     onThemeChange: (PulseThemeId) -> Unit,
     onAccentColorChange: (Int) -> Unit,
+    onAppLanguageChange: (AppLanguage) -> Unit = {},
     onTileTapBehaviorChange: (TileInteractionBehavior) -> Unit,
     onApplyLastProfileOnBootChange: (Boolean) -> Unit,
     sleepProfileOptions: List<PerformanceProfile>,
@@ -126,6 +129,7 @@ fun SettingsScreen(
     onClearQuickAccessCombo: () -> Unit = {},
     capturingCombo: Boolean = false,
 ) {
+    val strings = LocalPulseStrings.current
     var showResetConfirmation by remember { mutableStateOf(false) }
 
     HudBackground(modifier = Modifier.fillMaxSize()) {
@@ -144,27 +148,31 @@ fun SettingsScreen(
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = "Settings",
+                    text = strings.settingsTitle,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = "P.U.L.S.E.",
+                    text = strings.appName,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Text(
-                    text = "Performance Utility for Load and System Efficiency",
+                    text = strings.appTagline,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             TextButton(onClick = onBack) {
-                Text("Done")
+                Text(strings.done)
             }
         }
 
-        SettingsSection(title = "PULSE") {
+        SettingsSection(title = strings.languageSectionTitle) {
+            LanguageSelector(selected = settings.appLanguage, onSelect = onAppLanguageChange)
+        }
+
+        SettingsSection(title = strings.pulseSectionTitle) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -175,14 +183,12 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = if (settings.pulseEnabled) "PULSE is active" else "System in control",
+                        text = if (settings.pulseEnabled) strings.pulseActive else strings.pulseSystemControl,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = "Master switch. Turn OFF to hand every control back to manufacturer stock — " +
-                            "uncapped clocks, Smart fan, restored governor/refresh — and fully stop PULSE. " +
-                            "Do this before uninstalling for a clean device.",
+                        text = strings.masterSwitchDesc,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -193,18 +199,18 @@ fun SettingsScreen(
             }
         }
 
-        SettingsSection(title = "Appearance") {
+        SettingsSection(title = strings.appearanceTitle) {
             ThemeSelector(selected = settings.themeId, onSelect = onThemeChange)
         }
 
-        SettingsSection(title = "Quick Settings Tile") {
+        SettingsSection(title = strings.quickSettingsTitle) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Add PULSE to Quick Settings",
+                    text = strings.addPulseToQs,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -214,14 +220,14 @@ fun SettingsScreen(
                 ) {
                     Text(
                         when {
-                            isQuickSettingsTileAdded -> "Tile already added"
-                            canRequestAddQuickSettingsTile -> "Add tile"
-                            else -> "Unavailable"
+                            isQuickSettingsTileAdded -> strings.tileAlreadyAdded
+                            canRequestAddQuickSettingsTile -> strings.addTile
+                            else -> strings.unavailable
                         },
                     )
                 }
             }
-            SettingsControlGroup(label = "Single tap") {
+            SettingsControlGroup(label = strings.singleTapLabel) {
                 TileBehaviorSelector(
                     selected = settings.tileTapBehavior,
                     onChange = onTileTapBehaviorChange,
@@ -229,7 +235,7 @@ fun SettingsScreen(
             }
         }
 
-        SettingsSection(title = "Startup") {
+        SettingsSection(title = strings.startupTitle) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -240,12 +246,12 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Apply last profile on device boot",
+                        text = strings.applyBootProfile,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = "When enabled, the app will attempt to restore the last applied profile after boot.",
+                        text = strings.applyBootProfileDesc,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -256,7 +262,7 @@ fun SettingsScreen(
             }
         }
 
-        SettingsSection(title = "Sleep") {
+        SettingsSection(title = strings.sleepProfileTitle) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -267,12 +273,12 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Apply sleep profile",
+                        text = strings.sleepProfileSwitch,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = "When enabled, PULSE keeps a low-priority notification so it can apply this profile when the screen turns off and restore the previous limits when the device wakes.",
+                        text = strings.sleepProfileSwitchDesc,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -284,11 +290,11 @@ fun SettingsScreen(
             }
             if (sleepProfileOptions.isEmpty()) {
                 Text(
-                    text = "No profiles are available yet.",
+                    text = strings.sleepProfileNone,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             } else {
-                SettingsControlGroup(label = "Profile while asleep") {
+                SettingsControlGroup(label = strings.sleepProfileSelect) {
                     SleepProfileSelector(
                         profiles = sleepProfileOptions,
                         selectedProfileId = settings.sleepProfileId,
@@ -299,7 +305,7 @@ fun SettingsScreen(
             }
         }
 
-        SettingsSection(title = "Per-app profiles") {
+        SettingsSection(title = strings.perAppSectionTitle) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -310,12 +316,12 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Switch profiles per app",
+                        text = strings.perAppSwitch,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = "Applies an app's bound profile and extras when it launches, and restores the previous state when it exits. Needs the Usage access permission.",
+                        text = strings.perAppSwitchDesc,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -339,7 +345,7 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 TextButton(onClick = onOpenPerApps) {
-                    Text("Configure apps")
+                    Text(strings.perAppConfigureButton)
                 }
             }
             Row(
@@ -352,12 +358,12 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Switch notifications",
+                        text = strings.perAppSwitchNotices,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = "Show a toast and status notification when a per-app profile applies or restores.",
+                        text = strings.perAppSwitchNoticesDesc,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -368,7 +374,7 @@ fun SettingsScreen(
             }
         }
 
-        SettingsSection(title = "On-screen overlay") {
+        SettingsSection(title = strings.overlaySectionTitle) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -379,12 +385,12 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Show in-game overlay",
+                        text = strings.inGameOverlaySwitch,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = "Floats live FPS, clocks, temps, power and battery time-left over apps you've configured in Per-app profiles. Needs the \"Display over other apps\" permission. While unlocked, drag to reposition and tap LAYOUT to switch density; the notification's \"Move overlay\" action toggles the lock during play.",
+                        text = strings.inGameOverlayDesc,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -403,13 +409,12 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Quick Access bar",
+                        text = strings.quickAccessSwitch,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = "Adjust performance, fan, and lighting without leaving your game. Open the panel " +
-                            "with the edge handle or your controller shortcut — changes apply instantly.",
+                        text = strings.quickAccessDesc,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -429,11 +434,11 @@ fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
                         Text(
-                            text = "Edge handle",
+                            text = strings.quickAccessHandleSwitch,
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         Text(
-                            text = "Show a small tab on the screen edge that opens the panel.",
+                            text = strings.quickAccessHandleDesc,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -445,7 +450,7 @@ fun SettingsScreen(
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Controller shortcut: " +
+                        text = "${strings.quickAccessComboLabel}: " +
                             com.kei.pulse.data.InputComboParser.displayName(
                                 com.kei.pulse.data.InputComboParser.decode(settings.quickAccessCombo),
                             ),
@@ -454,19 +459,19 @@ fun SettingsScreen(
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (capturingCombo) {
                             Text(
-                                text = "Hold the buttons on your controller…",
+                                text = strings.pressComboPrompt,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.align(Alignment.CenterVertically),
                             )
                         } else {
-                            TextButton(onClick = onSetQuickAccessCombo) { Text("Set shortcut") }
-                            TextButton(onClick = onClearQuickAccessCombo) { Text("Clear") }
+                            TextButton(onClick = onSetQuickAccessCombo) { Text(strings.setComboButton) }
+                            TextButton(onClick = onClearQuickAccessCombo) { Text(strings.clearComboButton) }
                         }
                     }
                 }
             }
-            SettingsControlGroup(label = "Layout · density + quick-fill") {
+            SettingsControlGroup(label = strings.overlayPresetLabel) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OverlayPreset.entries.forEach { preset ->
                         FilterChip(
@@ -477,7 +482,7 @@ fun SettingsScreen(
                     }
                 }
             }
-            SettingsControlGroup(label = "Shown items") {
+            SettingsControlGroup(label = strings.overlayElementsLabel) {
                 Text(
                     text = "Tap to add or remove. Grouped by what it measures; a few items only render in the " +
                         "Detailed/Full layouts (core bars, chip name, FPS trend).",
@@ -493,7 +498,7 @@ fun SettingsScreen(
                     )
                 }
             }
-            SettingsControlGroup(label = "Opacity · $overlayOpacity%") {
+            SettingsControlGroup(label = "${strings.overlayOpacityLabel} · $overlayOpacity%") {
                 Slider(
                     value = overlayOpacity.toFloat(),
                     onValueChange = { onOverlayOpacityChange(it.roundToInt()) },
@@ -502,7 +507,7 @@ fun SettingsScreen(
             }
         }
 
-        SettingsSection(title = "Joystick RGB") {
+        SettingsSection(title = strings.rgbSectionTitle) {
             Text(
                 text = "Color the controller's joystick LEDs. Battery and Heat glow with device status; " +
                     "Manual sets your own color per stick. Turn the lights on in your system settings to see them.",
@@ -527,7 +532,7 @@ fun SettingsScreen(
             }
         }
 
-        SettingsSection(title = "Profiles") {
+        SettingsSection(title = strings.backupSectionTitle) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -538,12 +543,12 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Share profiles",
+                        text = strings.exportProfilesTitle,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = "Export profiles to JSON or import a shared profile file.",
+                        text = strings.exportProfilesDesc,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -552,10 +557,10 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     TextButton(onClick = onImportProfiles) {
-                        Text("Import")
+                        Text(strings.importStr)
                     }
                     TextButton(onClick = onExportProfiles) {
-                        Text("Export")
+                        Text(strings.export)
                     }
                 }
             }
@@ -570,29 +575,29 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Reset profiles to default",
+                        text = strings.resetProfilesTitle,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = "Bundled profiles are restored and custom profiles are removed.",
+                        text = strings.resetProfilesDesc,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
                 TextButton(onClick = { showResetConfirmation = true }) {
-                    Text("Reset")
+                    Text(strings.reset)
                 }
             }
         }
         SettingsSection(title = "About") {
             Text(
-                text = "P.U.L.S.E.",
+                text = strings.appName,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(
-                text = "Performance Utility for Load and System Efficiency",
+                text = strings.appTagline,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -608,9 +613,9 @@ fun SettingsScreen(
     if (showResetConfirmation) {
         AlertDialog(
             onDismissRequest = { showResetConfirmation = false },
-            title = { Text("Reset profiles?") },
+            title = { Text(strings.resetProfilesConfirmTitle) },
             text = {
-                Text("This removes custom profiles and restores the bundled defaults.")
+                Text(strings.resetProfilesConfirmMsg)
             },
             confirmButton = {
                 TextButton(
@@ -619,12 +624,12 @@ fun SettingsScreen(
                         onResetProfiles()
                     },
                 ) {
-                    Text("Reset")
+                    Text(strings.reset)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showResetConfirmation = false }) {
-                    Text("Cancel")
+                    Text(strings.cancel)
                 }
             },
         )
@@ -1207,3 +1212,30 @@ private fun ThemeSelector(
         }
     }
 }
+
+@Composable
+private fun LanguageSelector(
+    selected: AppLanguage,
+    onSelect: (AppLanguage) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        AppLanguage.entries.forEach { lang ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onSelect(lang) }
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(selected = selected == lang, onClick = { onSelect(lang) })
+                Text(
+                    text = lang.displayName,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
+    }
+}
+

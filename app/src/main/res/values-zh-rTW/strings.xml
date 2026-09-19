@@ -1,0 +1,9 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">PULSE-zh</string>
+    <string name="app_full_name" tools:ignore="UnusedResources">P.U.L.S.E.</string>
+    <string name="app_backronym" tools:ignore="UnusedResources">負載與系統效能調校工具 (Performance Utility for Load and System Efficiency)</string>
+    <string name="tile_label">PULSE 調校器</string>
+    <string name="tile_title">PULSE</string>
+    <string name="tile_state_manual">手動</string>
+    <string name="tile_state_unavailable">無法使用</string>
+</resources>

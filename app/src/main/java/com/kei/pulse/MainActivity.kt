@@ -156,6 +156,7 @@ class MainActivity : ComponentActivity() {
                             onColorSourceChange = viewModel::setColorSource,
                             onThemeChange = viewModel::setThemeId,
                             onAccentColorChange = viewModel::setAccentColor,
+                            onAppLanguageChange = viewModel::setAppLanguage,
                             onTileTapBehaviorChange = { behavior ->
                                 viewModel.setTileTapBehavior(behavior) {
                                     QuickSettingsTileRefresher.requestUpdate(this@MainActivity)
