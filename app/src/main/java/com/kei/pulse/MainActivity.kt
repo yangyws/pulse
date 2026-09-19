@@ -27,6 +27,7 @@ import com.kei.pulse.overlay.PerformanceOverlay
 import com.kei.pulse.sleep.SleepProfileMonitorService
 import com.kei.pulse.tile.QuickSettingsTileAddResult
 import com.kei.pulse.tile.QuickSettingsTilePrompt
+import com.kei.pulse.tile.QuickSettingsTileRefresher
 import com.kei.pulse.i18n.PulseStrings
 import com.kei.pulse.i18n.resolvePulseStrings
 import com.kei.pulse.ui.FanCurveEditorBindings

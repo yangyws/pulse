@@ -395,4 +395,6 @@ object EnStrings : PulseStrings {
     override val errorNoProfilesForCycling = "No profiles available for tile cycling"
     override val verifyRequested = "requested"
     override val verifyActual = "actual"
+    override val powerTierAutoTdp = "AutoTDP"
+    override val powerTierStock = "Stock"
 }

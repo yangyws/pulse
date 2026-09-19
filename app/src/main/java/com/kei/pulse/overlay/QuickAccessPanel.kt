@@ -66,8 +66,6 @@ import com.kei.pulse.model.OverlayPreset
 import com.kei.pulse.model.PerAppConfig
 import com.kei.pulse.model.PowerTier
 import com.kei.pulse.model.RgbMode
-import com.kei.pulse.model.localizedLabel
-import com.kei.pulse.model.localizedTagline
 import kotlinx.coroutines.flow.SharedFlow
 import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.StateFlow

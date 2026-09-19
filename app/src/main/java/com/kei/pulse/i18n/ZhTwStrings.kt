@@ -395,4 +395,6 @@ object ZhTwStrings : PulseStrings {
     override val errorNoProfilesForCycling = "沒有可用於圖塊輪播的設定檔"
     override val verifyRequested = "要求"
     override val verifyActual = "實際"
+    override val powerTierAutoTdp = "AutoTDP"
+    override val powerTierStock = "原廠預設"
 }

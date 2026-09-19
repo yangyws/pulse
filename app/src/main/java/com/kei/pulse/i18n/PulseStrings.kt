@@ -395,4 +395,6 @@ interface PulseStrings {
     val errorNoProfilesForCycling: String
     val verifyRequested: String
     val verifyActual: String
+    val powerTierAutoTdp: String
+    val powerTierStock: String
 }

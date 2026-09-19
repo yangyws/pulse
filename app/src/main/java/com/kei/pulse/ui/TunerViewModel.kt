@@ -182,7 +182,7 @@ class TunerViewModel(
             applySideControls(TierTransition.afterCpuFloor(currentSideControls(), percent))
             val strings = currentStrings()
             transientMessage.value = if (percent <= 0) strings.toastCpuFloorCleared else String.format(strings.toastCpuFloorSet, percent)
-            transientError.value = if (ok) null else String.format(strings.toastFailedToApply, strings.cpuFloorTitle)
+            transientError.value = if (ok) null else String.format(strings.toastFailedToApply, strings.cpuFloorLabel)
             persistTuning()
         }
     }

@@ -395,4 +395,6 @@ object ZhCnStrings : PulseStrings {
     override val errorNoProfilesForCycling = "没有可用于图块轮询的配置文件"
     override val verifyRequested = "要求"
     override val verifyActual = "实际"
+    override val powerTierAutoTdp = "AutoTDP"
+    override val powerTierStock = "出厂默认"
 }
