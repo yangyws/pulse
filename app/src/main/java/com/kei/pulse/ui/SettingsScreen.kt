@@ -477,19 +477,18 @@ fun SettingsScreen(
                         FilterChip(
                             selected = overlayPreset == preset,
                             onClick = { onOverlayPresetChange(preset) },
-                            label = { Text(preset.label) },
+                            label = { Text(preset.localizedLabel(strings)) },
                         )
                     }
                 }
             }
             SettingsControlGroup(label = strings.overlayElementsLabel) {
                 Text(
-                    text = "Tap to add or remove. Grouped by what it measures; a few items only render in the " +
-                        "Detailed/Full layouts (core bars, chip name, FPS trend).",
+                    text = strings.overlayElementsHelpText,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                OverlayItemGroups.forEach { group ->
+                getOverlayItemGroups(strings).forEach { group ->
                     OverlayItemGroup(
                         title = group.title,
                         items = group.items,
@@ -509,8 +508,7 @@ fun SettingsScreen(
 
         SettingsSection(title = strings.rgbSectionTitle) {
             Text(
-                text = "Color the controller's joystick LEDs. Battery and Heat glow with device status; " +
-                    "Manual sets your own color per stick. Turn the lights on in your system settings to see them.",
+                text = strings.rgbHelpText,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -519,7 +517,7 @@ fun SettingsScreen(
                     FilterChip(
                         selected = settings.rgbMode == mode,
                         onClick = { onRgbModeChange(mode) },
-                        label = { Text(mode.label) },
+                        label = { Text(mode.localizedLabel(strings)) },
                     )
                 }
             }
@@ -589,7 +587,7 @@ fun SettingsScreen(
                 }
             }
         }
-        SettingsSection(title = "About") {
+        SettingsSection(title = strings.aboutSectionTitle) {
             Text(
                 text = strings.appName,
                 style = MaterialTheme.typography.titleMedium,
@@ -602,7 +600,7 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = "No-root CPU + GPU control for AYN Odin 3, AYN Thor and Retroid Pocket 6.",
+                text = strings.aboutDescription,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -644,6 +642,7 @@ private fun SleepProfileSelector(
     enabled: Boolean,
     onChange: (String?) -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     var expanded by remember { mutableStateOf(false) }
     val selectedProfile = profiles.firstOrNull { profile -> profile.id == selectedProfileId }
 
@@ -652,7 +651,7 @@ private fun SleepProfileSelector(
         onExpandedChange = { if (enabled) expanded = !expanded },
     ) {
         OutlinedTextField(
-            value = selectedProfile?.name ?: "Select profile",
+            value = selectedProfile?.name ?: strings.selectProfile,
             onValueChange = {},
             readOnly = true,
             enabled = enabled,
@@ -689,9 +688,10 @@ private fun ThemeModeSelector(
     selectedAccentColor: Int,
     onAccentColorChange: (Int) -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         ThemeModeOption(
-            title = "System colors",
+            title = strings.systemColors,
             selected = selected == AppColorSource.SYSTEM,
             onClick = { onChange(AppColorSource.SYSTEM) },
         )
@@ -704,7 +704,7 @@ private fun ThemeModeSelector(
                 onClick = { onChange(AppColorSource.CUSTOM_ACCENT) },
             )
             Text(
-                text = "Custom",
+                text = strings.custom,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(start = 8.dp),
@@ -781,25 +781,26 @@ private fun TileBehaviorSelector(
     selected: TileInteractionBehavior,
     onChange: (TileInteractionBehavior) -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TileBehaviorOption(
-            title = "Quick settings dialog",
+            title = strings.tileBehaviorDialog,
             selected = selected == TileInteractionBehavior.SHOW_DIALOG,
             onClick = { onChange(TileInteractionBehavior.SHOW_DIALOG) },
             modifier = Modifier.weight(1f),
         )
         TileBehaviorOption(
-            title = "Cycle profiles",
+            title = strings.tileBehaviorCycle,
             selected = selected == TileInteractionBehavior.CYCLE_PROFILES,
             onClick = { onChange(TileInteractionBehavior.CYCLE_PROFILES) },
             modifier = Modifier.weight(1f),
         )
         TileBehaviorOption(
-            title = "Open app",
+            title = strings.tileBehaviorOpenApp,
             selected = selected == TileInteractionBehavior.OPEN_APP,
             onClick = { onChange(TileInteractionBehavior.OPEN_APP) },
             modifier = Modifier.weight(1f),
@@ -842,6 +843,7 @@ private fun ManualRgbControls(
     onTargetChange: (RgbStick) -> Unit,
     onStickChange: (RgbStick, Int, Float) -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     val target = settings.rgbManualTarget
     // The edited stick's stored color (at full value) + brightness. "Both" edits from the Left values.
     val storedColor = if (target == RgbStick.RIGHT) settings.rgbManualRightColor else settings.rgbManualLeftColor
@@ -862,7 +864,7 @@ private fun ManualRgbControls(
         // Left — stick target + L/R swatches
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                text = "Stick",
+                text = strings.rgbTargetStickLabel,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -871,7 +873,7 @@ private fun ManualRgbControls(
                     FilterChip(
                         selected = target == stick,
                         onClick = { onTargetChange(stick) },
-                        label = { Text(stick.label) },
+                        label = { Text(stick.localizedLabel(strings)) },
                     )
                 }
             }
@@ -896,14 +898,14 @@ private fun ManualRgbControls(
             )
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
                 Text(
-                    text = "color",
+                    text = strings.rgbColorLabel,
                     modifier = Modifier.weight(17f),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    text = "brightness",
+                    text = strings.rgbBrightnessLabel,
                     modifier = Modifier.weight(12f),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelMedium,
@@ -1074,42 +1076,42 @@ private fun SettingsControlGroup(
 private class OverlayItemGroupDef(val title: String, val items: List<Pair<OverlayElement, String>>)
 
 // Short, in-context labels (the group header carries the "GPU"/"CPU" prefix) covering all 15 OverlayElements.
-private val OverlayItemGroups = listOf(
+private fun getOverlayItemGroups(strings: com.kei.pulse.i18n.PulseStrings) = listOf(
     OverlayItemGroupDef(
-        "Frame rate",
-        listOf(OverlayElement.FPS to "FPS", OverlayElement.FPS_TREND to "Avg · Low · Trend"),
+        strings.overlayGroupFrameRate,
+        listOf(OverlayElement.FPS to "FPS", OverlayElement.FPS_TREND to strings.overlayItemFpsTrend),
     ),
     OverlayItemGroupDef(
-        "GPU",
+        strings.overlayGroupGpu,
         listOf(
-            OverlayElement.GPU_LOAD to "Load",
-            OverlayElement.GPU_CLOCK to "Clock",
-            OverlayElement.GPU_TEMP to "Temp",
+            OverlayElement.GPU_LOAD to strings.overlayItemLoad,
+            OverlayElement.GPU_CLOCK to strings.overlayItemClock,
+            OverlayElement.GPU_TEMP to strings.overlayItemTemp,
         ),
     ),
     OverlayItemGroupDef(
-        "CPU",
+        strings.overlayGroupCpu,
         listOf(
-            OverlayElement.CPU_LOAD to "Load",
-            OverlayElement.CPU_CLOCK to "Clock",
-            OverlayElement.CPU_TEMP to "Temp",
-            OverlayElement.CORE_BARS to "Core bars",
+            OverlayElement.CPU_LOAD to strings.overlayItemLoad,
+            OverlayElement.CPU_CLOCK to strings.overlayItemClock,
+            OverlayElement.CPU_TEMP to strings.overlayItemTemp,
+            OverlayElement.CORE_BARS to strings.overlayItemCoreBars,
         ),
     ),
     OverlayItemGroupDef(
-        "System",
+        strings.overlayGroupSystem,
         listOf(
             OverlayElement.RAM to "RAM",
-            OverlayElement.POWER to "Power",
-            OverlayElement.BATTERY_LEFT to "Time left",
+            OverlayElement.POWER to strings.overlayItemPower,
+            OverlayElement.BATTERY_LEFT to strings.overlayItemTimeLeft,
         ),
     ),
     OverlayItemGroupDef(
-        "Status",
+        strings.overlayGroupStatus,
         listOf(
             OverlayElement.AUTOTDP to "AutoTDP",
-            OverlayElement.SESSION_TIMER to "Timer",
-            OverlayElement.SOC_NAME to "Chip name",
+            OverlayElement.SESSION_TIMER to strings.overlayItemTimer,
+            OverlayElement.SOC_NAME to strings.overlayItemChipName,
         ),
     ),
 )
@@ -1185,6 +1187,7 @@ private fun ThemeSelector(
     selected: PulseThemeId,
     onSelect: (PulseThemeId) -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         PulseThemeId.entries.forEach { theme ->
             Row(
@@ -1198,12 +1201,12 @@ private fun ThemeSelector(
                 RadioButton(selected = selected == theme, onClick = { onSelect(theme) })
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = theme.label,
+                        text = theme.localizedLabel(strings),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = theme.tagline,
+                        text = theme.localizedTagline(strings),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

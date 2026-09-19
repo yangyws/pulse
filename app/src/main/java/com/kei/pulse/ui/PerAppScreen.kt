@@ -123,7 +123,7 @@ fun PerAppScreen(
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = "Tap an app to bind a profile and extras",
+                        text = strings.perAppSubtitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -198,29 +198,49 @@ fun PerAppScreen(
     }
 }
 
-private fun bindingSummary(config: PerAppConfig?, profiles: List<PerformanceProfile>): String {
-    if (config == null) return "Not configured"
+private fun fanModeLabel(mode: Int?, strings: PulseStrings): String = when (mode) {
+    FanController.SILENT -> strings.fanModeQuiet
+    FanController.SMART -> strings.fanModeSmart
+    FanController.SPORT -> strings.fanModeMax
+    FanController.CUSTOM -> strings.fanModeCustom
+    else -> FanController.labelFor(mode)
+}
+
+private fun bindingSummary(config: PerAppConfig?, profiles: List<PerformanceProfile>, strings: PulseStrings): String {
+    if (config == null) return strings.notConfigured
     val parts = mutableListOf<String>()
     when {
         config.profileBinding == null -> {}
-        PerAppConfig.isAuto(config.profileBinding) ->
-            parts += "AutoTDP" + (config.fpsTarget?.let { " ${PerAppConfig.fpsTargetLabel(it)}fps" } ?: "") +
-                when (config.aggressivePark) { true -> " · Park"; false -> " · No-park"; null -> "" }
-        else -> PerAppConfig.tierFromBinding(config.profileBinding)?.let { parts += it.label }
-            ?: run { parts += profiles.firstOrNull { it.id == config.profileBinding }?.name ?: "Saved profile" }
+        PerAppConfig.isAuto(config.profileBinding) -> {
+            val fpsPart = config.fpsTarget?.let {
+                val label = if (it <= 0) strings.maxStr else it.toString()
+                " $label FPS"
+            } ?: ""
+            parts += "${strings.powerTierAutoTdp}$fpsPart" +
+                when (config.aggressivePark) { true -> " · ${strings.autoTdpAggressivePark}"; false -> ""; null -> "" }
+        }
+        else -> PerAppConfig.tierFromBinding(config.profileBinding)?.let { parts += it.localizedLabel(strings) }
+            ?: run {
+                val name = if (config.profileBinding == ProfileStateResolver.STOCK_PROFILE_ID) {
+                    strings.powerTierStock
+                } else {
+                    profiles.firstOrNull { it.id == config.profileBinding }?.name ?: strings.savedProfileStr
+                }
+                parts += name
+            }
     }
-    config.fanMode?.let { parts += "Fan ${FanController.labelFor(it)}" }
+    config.fanMode?.let { parts += "${strings.fanSectionTitle} ${fanModeLabel(it, strings)}" }
     // Refresh rate only matters for non-AutoTDP bindings (AutoTDP forces max).
     if (!PerAppConfig.isAuto(config.profileBinding)) config.refreshRateHz?.let { parts += "${it}Hz" }
-    return if (parts.isEmpty()) "Not configured" else parts.joinToString(" · ")
+    return if (parts.isEmpty()) strings.notConfigured else parts.joinToString(" · ")
 }
 
 /** "3h 51m" style runtime from a full battery at the given sustained draw. */
-private fun formatRuntime(capacityWh: Float, watts: Float): String {
+private fun formatRuntime(capacityWh: Float, watts: Float, strings: PulseStrings): String {
     val totalMinutes = (capacityWh / watts * 60f).toInt()
     val h = totalMinutes / 60
     val m = totalMinutes % 60
-    return if (h > 0) "${h}h ${m}m" else "${m}m"
+    return if (h > 0) "$h${strings.hourUnit} $m${strings.minuteUnit}" else "$m${strings.minuteUnit}"
 }
 
 @Composable
@@ -232,6 +252,7 @@ private fun PerAppRow(
     tuned: Boolean?,
     onClick: () -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     val configured = config != null
     val accent = MaterialTheme.colorScheme.primary
     Surface(
@@ -262,7 +283,7 @@ private fun PerAppRow(
                     maxLines = 1,
                 )
                 Text(
-                    text = bindingSummary(config, profiles),
+                    text = bindingSummary(config, profiles, strings),
                     style = MaterialTheme.typography.bodySmall,
                     color = if (configured) accent else MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -271,7 +292,7 @@ private fun PerAppRow(
                 // warm-started next launch — so it starts already tuned instead of re-discovering from scratch.
                 tuned?.let {
                     Text(
-                        text = if (it) "✓ tuned" else "learning…",
+                        text = if (it) strings.tunedBadge else strings.learningBadge,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = if (it) accent else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -287,7 +308,7 @@ private fun PerAppRow(
             if (drawW > 0f) {
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = String.format(java.util.Locale.US, "AVG PW DRAW %.1f W", drawW),
+                        text = String.format(strings.avgPowerDraw, drawW),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.tertiary,
                         maxLines = 1,
@@ -295,7 +316,7 @@ private fun PerAppRow(
                     if (batteryCapacityWh > 0f) {
                         // Runtime from the same average draw — the realistic figure.
                         Text(
-                            text = "≈ ${formatRuntime(batteryCapacityWh, drawW)}",
+                            text = "≈ ${formatRuntime(batteryCapacityWh, drawW, strings)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
@@ -320,6 +341,7 @@ private fun PerAppConfigDialog(
     onRemove: () -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     var profileBinding by remember { mutableStateOf(existing?.profileBinding) }
     var fanMode by remember { mutableStateOf(existing?.fanMode) }
     var refreshRate by remember { mutableStateOf(existing?.refreshRateHz) }
@@ -339,23 +361,24 @@ private fun PerAppConfigDialog(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                DialogGroupLabel("PROFILE")
+                DialogGroupLabel(strings.perAppDialogProfile)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    DialogChip("None", profileBinding == null) { profileBinding = null }
-                    DialogChip("AutoTDP", PerAppConfig.isAuto(profileBinding)) {
+                    DialogChip(strings.noneStr, profileBinding == null) { profileBinding = null }
+                    DialogChip(strings.powerTierAutoTdp, PerAppConfig.isAuto(profileBinding)) {
                         profileBinding = PerAppConfig.AUTO_BINDING
                     }
                     PowerTier.entries.forEach { tier ->
                         val binding = PerAppConfig.tierBinding(tier)
-                        DialogChip(tier.label, profileBinding == binding) { profileBinding = binding }
+                        DialogChip(tier.localizedLabel(strings), profileBinding == binding) { profileBinding = binding }
                     }
                     profiles
                         .filter { it.source != ProfileSource.VIRTUAL || it.id == ProfileStateResolver.STOCK_PROFILE_ID }
                         .forEach { profile ->
-                            DialogChip(profile.name, profileBinding == profile.id) {
+                            val label = if (profile.id == ProfileStateResolver.STOCK_PROFILE_ID) strings.powerTierStock else profile.name
+                            DialogChip(label, profileBinding == profile.id) {
                                 profileBinding = profile.id
                             }
                         }
@@ -364,14 +387,14 @@ private fun PerAppConfigDialog(
                 // AutoTDP uses the global fan choice; the per-app fan picker is hidden for it until the
                 // service layer supports per-app fan overrides during AutoTDP.
                 if (!PerAppConfig.isAuto(profileBinding)) {
-                    DialogGroupLabel("FAN (ODIN)")
+                    DialogGroupLabel(strings.perAppDialogFan)
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        DialogChip("Default", fanMode == null) { fanMode = null }
+                        DialogChip(strings.defaultStr, fanMode == null) { fanMode = null }
                         FanController.MODES.forEach { mode ->
-                            DialogChip(mode.label, fanMode == mode.value) { fanMode = mode.value }
+                            DialogChip(fanModeLabel(mode.value, strings), fanMode == mode.value) { fanMode = mode.value }
                         }
                     }
                 }
@@ -379,43 +402,44 @@ private fun PerAppConfigDialog(
                 if (PerAppConfig.isAuto(profileBinding)) {
                     // AutoTDP owns the refresh rate (pins the panel to max), so the user picks an FPS
                     // target instead — AutoTDP trims clocks to hold it.
-                    DialogGroupLabel("FPS TARGET")
+                    DialogGroupLabel(strings.perAppDialogFpsTarget)
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         fpsOptions.forEach { target ->
-                            DialogChip(PerAppConfig.fpsTargetLabel(target), fpsTarget == target) {
+                            val label = if (target <= 0) strings.maxStr else "$target FPS"
+                            DialogChip(label, fpsTarget == target) {
                                 fpsTarget = target
                             }
                         }
                     }
                     // Aggressive core parking is part of the AutoTDP algorithm, so it's set per app here.
-                    DialogGroupLabel("AGGRESSIVE PARK")
+                    DialogGroupLabel(strings.perAppDialogAggressivePark)
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        DialogChip("On", aggressivePark) { aggressivePark = true }
-                        DialogChip("Off", !aggressivePark) { aggressivePark = false }
+                        DialogChip(strings.on, aggressivePark) { aggressivePark = true }
+                        DialogChip(strings.off, !aggressivePark) { aggressivePark = false }
                     }
-                    DialogGroupLabel("EFFICIENCY")
+                    DialogGroupLabel(strings.perAppDialogEfficiency)
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        DialogChip("Inherit", bias == null) { bias = null }
+                        DialogChip(strings.inheritStr, bias == null) { bias = null }
                         AutoTdpBias.entries.forEach { b ->
-                            DialogChip(b.label, bias == b) { bias = b }
+                            DialogChip(b.localizedLabel(strings), bias == b) { bias = b }
                         }
                     }
                 } else {
-                    DialogGroupLabel("REFRESH RATE")
+                    DialogGroupLabel(strings.perAppDialogRefreshRate)
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        DialogChip("Default", refreshRate == null) { refreshRate = null }
+                        DialogChip(strings.defaultStr, refreshRate == null) { refreshRate = null }
                         listOf(60, 90, 120).forEach { hz ->
                             DialogChip("$hz Hz", refreshRate == hz) { refreshRate = hz }
                         }
@@ -423,7 +447,7 @@ private fun PerAppConfigDialog(
                 }
 
                 Text(
-                    text = "Applied when this app comes to the foreground; the previous state is restored when it leaves. \"Default\" leaves that control alone. AutoTDP pins the panel to max refresh and trims the CPU then GPU to hold your FPS target at the lowest power; pair it with the global Custom fan on the main screen. \"Default\" target uses the global default, \"Max\" runs uncapped. Custom applies your saved Custom setup — for frequencies unique to this app, save a profile on the main screen and bind it here.",
+                    text = strings.perAppHelpText,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -444,18 +468,18 @@ private fun PerAppConfigDialog(
                     ),
                 )
             }) {
-                Text("Save")
+                Text(strings.save)
             }
         },
         dismissButton = {
             Row {
                 if (existing != null) {
                     TextButton(onClick = onRemove) {
-                        Text("Remove")
+                        Text(strings.perAppRemoveButton)
                     }
                 }
                 TextButton(onClick = onDismiss) {
-                    Text("Cancel")
+                    Text(strings.cancel)
                 }
             }
         },

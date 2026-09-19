@@ -194,19 +194,19 @@ fun MainTunerScreen(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     Text(
-                        text = "Global Profile",
+                        text = strings.tunerTitle,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
-                        text = "Applies to every app unless a per-app profile overrides it.",
+                        text = strings.tunerSubtitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
-                PulseSectionLabel("${strings.powerTiersTitle} · TIER")
+                PulseSectionLabel(strings.powerTiersTitle)
                 AutoTdpModule(
                     enabled = autoTdpEnabled,
                     onEnabledChange = onAutoTdpEnabledChange,
@@ -255,14 +255,15 @@ fun MainTunerScreen(
                 if (activeTier == PowerTier.CUSTOM && !autoTdpEnabled) {
                     PulseSectionLabel(
                         when {
-                            powerTargetEnabled && !powerTargetCpuOnly -> "MANUAL CONTROL · LOCKED BY POWER TARGET"
-                            powerTargetEnabled && powerTargetCpuOnly -> "MANUAL CONTROL · CPU LOCKED · GPU FREE"
-                            else -> "MANUAL CONTROL · CPU + GPU"
+                            powerTargetEnabled && !powerTargetCpuOnly -> strings.manualControlLockedPower
+                            powerTargetEnabled && powerTargetCpuOnly -> strings.manualControlCpuLocked
+                            else -> strings.manualControlAll
                         },
                     )
+                    val primePolicyId = state.policies.filterNot { it.isGpu }.maxByOrNull { it.id }?.id
                     state.policies.forEach { policy ->
                         val cardLocked = powerTargetEnabled && (!policy.isGpu || !powerTargetCpuOnly)
-                        val (clusterName, clusterCaption) = clusterRole(policy, state.policies)
+                        val (clusterName, clusterCaption) = clusterRole(policy, state.policies, strings)
                         PolicyCard(
                             policy = policy,
                             clusterName = clusterName,
@@ -272,7 +273,7 @@ fun MainTunerScreen(
                             actualValue = state.actualValues[policy.id] ?: policy.currentMaxFreq,
                             enabled = !cardLocked,
                         )
-                        if (clusterName == "Prime" && !policy.isGpu) {
+                        if (!policy.isGpu && policy.id == primePolicyId) {
                             PrimeBoostLimitRow(
                                 limited = primeCoreBoostLimited,
                                 onToggle = onTogglePrimeCoreBoostLimit,
@@ -366,6 +367,8 @@ fun CompactTunerScreen(
     onRefreshLiveValues: () -> Unit,
     onOpenFullApp: (() -> Unit)? = null,
 ) {
+    val strings = LocalPulseStrings.current
+
     ScreenNotifications(
         state = state,
         onStatusMessageShown = {},
@@ -418,7 +421,7 @@ fun CompactTunerScreen(
                         modifier = Modifier.weight(1f),
                         contentPadding = PaddingValues(vertical = 14.dp),
                     ) {
-                        Text("Cancel")
+                        Text(strings.cancel)
                     }
                     Button(
                         onClick = {
@@ -428,7 +431,7 @@ fun CompactTunerScreen(
                         modifier = Modifier.weight(1f),
                         contentPadding = PaddingValues(vertical = 14.dp),
                     ) {
-                        Text("Apply")
+                        Text(strings.apply)
                     }
                 }
             }
@@ -438,6 +441,7 @@ fun CompactTunerScreen(
 
 @Composable
 private fun LoadingClustersCard() {
+    val strings = LocalPulseStrings.current
     SectionCard(
         title = null,
         containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f),
@@ -452,7 +456,7 @@ private fun LoadingClustersCard() {
                 strokeWidth = 2.5.dp,
             )
             Text(
-                text = "Scanning CPU clusters...",
+                text = strings.scanningClusters,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -550,7 +554,7 @@ private fun Header(
                         )
                     }
                     Text(
-                        text = "CLUSTER · GPU FREQUENCY CONTROL",
+                        text = "${strings.cpuPoliciesLabel} · ${strings.gpuSectionTitle}",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -560,7 +564,7 @@ private fun Header(
                     IconButton(onClick = openSettings) {
                         Icon(
                             imageVector = Icons.Rounded.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = strings.settingsTitle,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -587,6 +591,7 @@ private fun Header(
 
 @Composable
 private fun PServerStatusChip(isLinked: Boolean) {
+    val strings = LocalPulseStrings.current
     val color = if (isLinked) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
     Surface(
         color = color.copy(alpha = 0.12f),
@@ -603,7 +608,7 @@ private fun PServerStatusChip(isLinked: Boolean) {
                     .background(color, CircleShape),
             )
             Text(
-                text = if (isLinked) "PSERVER · LINKED · NO-ROOT" else "PSERVER UNAVAILABLE",
+                text = if (isLinked) strings.pserverLinked else strings.pserverUnavailable,
                 style = MaterialTheme.typography.labelSmall,
                 color = color,
             )
@@ -614,12 +619,13 @@ private fun PServerStatusChip(isLinked: Boolean) {
 /** Read-only live readout of each cluster's active clock. The sliders below are what change them. */
 @Composable
 private fun CurrentFrequenciesCard(state: TunerState) {
+    val strings = LocalPulseStrings.current
     SectionCard(
         title = null,
         containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f),
     ) {
         if (state.policies.isEmpty()) {
-            Text("No CPU clusters found.")
+            Text(strings.noCpuClustersFound)
         } else {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -627,7 +633,7 @@ private fun CurrentFrequenciesCard(state: TunerState) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Current values",
+                    text = strings.currentValuesTitle,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -653,6 +659,7 @@ private fun ProfileListSection(
     onMoveProfile: (String, Int) -> Unit,
     onApplySelectedProfile: () -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     SectionCard(
         title = null,
         containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.72f),
@@ -663,7 +670,7 @@ private fun ProfileListSection(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Saved setups",
+                text = strings.profilesTitle,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -675,7 +682,7 @@ private fun ProfileListSection(
                 )
                 Spacer(Modifier.size(6.dp))
                 Text(
-                    text = "New",
+                    text = strings.newProfile,
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
@@ -720,8 +727,8 @@ private fun ProfileListSection(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             ) {
                 Text(
-                    text = state.selectedDisplayProfileName?.let { "Apply $it" }
-                        ?: "Select a profile to apply",
+                    text = state.selectedDisplayProfileName?.let { String.format(strings.applyProfileLabel, it) }
+                        ?: strings.selectProfilePrompt,
                 )
             }
         }
@@ -804,7 +811,7 @@ private fun ProfileListRow(
                 if (isSleepProfile) {
                     Icon(
                         imageVector = Icons.Rounded.DarkMode,
-                        contentDescription = "Sleep profile",
+                        contentDescription = null,
                         modifier = Modifier.size(16.dp),
                         tint = contentColor.copy(alpha = 0.78f),
                     )
@@ -822,7 +829,7 @@ private fun ProfileListRow(
             IconButton(onClick = onEdit) {
                 Icon(
                     Icons.Rounded.Edit,
-                    contentDescription = "Edit ${profile.name}",
+                    contentDescription = null,
                     tint = contentColor,
                 )
             }
@@ -851,7 +858,7 @@ private fun ReorderControl(
         ) {
             Icon(
                 Icons.Rounded.ExpandLess,
-                contentDescription = "Move up",
+                contentDescription = null,
                 tint = if (canMoveUp) colorScheme.primary else colorScheme.outline,
             )
         }
@@ -862,7 +869,7 @@ private fun ReorderControl(
         ) {
             Icon(
                 Icons.Rounded.ExpandMore,
-                contentDescription = "Move down",
+                contentDescription = null,
                 tint = if (canMoveDown) colorScheme.primary else colorScheme.outline,
             )
         }
@@ -944,7 +951,7 @@ private fun ProfileChipSelector(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Settings,
-                        contentDescription = "Open full app",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                     )
                 }
@@ -1049,7 +1056,7 @@ private fun ProfileEditorDialog(
                         onValueChange = { profileName = it },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
-                        label = { Text("Profile name") },
+                        label = { Text(strings.profileName) },
                     )
                 }
                 baseState.policies.forEach { policy ->
@@ -1069,13 +1076,13 @@ private fun ProfileEditorDialog(
                         horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End),
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel")
+                            Text(strings.cancel)
                         }
                         Button(
                             onClick = { onSave(profile?.name.orEmpty(), editedValues) },
                             enabled = baseState.policies.isNotEmpty(),
                         ) {
-                            Text("Apply custom values")
+                            Text(strings.applyCustomValues)
                         }
                     }
                 } else {
@@ -1090,7 +1097,7 @@ private fun ProfileEditorDialog(
                             ) {
                                 Icon(
                                     Icons.Rounded.Delete,
-                                    contentDescription = "Delete profile",
+                                    contentDescription = strings.deleteProfileTitle,
                                     tint = MaterialTheme.colorScheme.error,
                                 )
                             }
@@ -1099,13 +1106,13 @@ private fun ProfileEditorDialog(
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             TextButton(onClick = onDismiss) {
-                                Text("Cancel")
+                                Text(strings.cancel)
                             }
                             Button(
                                 onClick = { onSave(profileName, editedValues) },
                                 enabled = profileName.isNotBlank() && baseState.policies.isNotEmpty(),
                             ) {
-                                Text("Save")
+                                Text(strings.save)
                             }
                         }
                     }
@@ -1117,8 +1124,8 @@ private fun ProfileEditorDialog(
     if (showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text("Delete profile?") },
-            text = { Text("This profile will be removed until you reset profiles to default.") },
+            title = { Text(strings.deleteProfileTitle) },
+            text = { Text(strings.deleteProfileConfirmMsg) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -1126,12 +1133,12 @@ private fun ProfileEditorDialog(
                         onDelete()
                     },
                 ) {
-                    Text("Delete")
+                    Text(strings.delete)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirmation = false }) {
-                    Text("Cancel")
+                    Text(strings.cancel)
                 }
             },
         )
@@ -1140,12 +1147,13 @@ private fun ProfileEditorDialog(
 
 @Composable
 private fun EmptyState(state: TunerState) {
-    SectionCard(title = if (state.isLoading) "Scanning CPU Clusters" else "No CPU Clusters Found") {
+    val strings = LocalPulseStrings.current
+    SectionCard(title = if (state.isLoading) strings.scanningCpuClusters else strings.noCpuClustersFound) {
         Text(
             text = if (state.isLoading) {
-                "Scanning CPU clusters..."
+                strings.scanningCpuClustersProgress
             } else {
-                "No compatible CPU frequency clusters were found."
+                strings.noCompatibleCpuClusters
             },
         )
     }
@@ -1153,6 +1161,7 @@ private fun EmptyState(state: TunerState) {
 
 @Composable
 private fun PrimeBoostLimitRow(limited: Boolean, onToggle: (Boolean) -> Unit) {
+    val strings = LocalPulseStrings.current
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -1160,12 +1169,12 @@ private fun PrimeBoostLimitRow(limited: Boolean, onToggle: (Boolean) -> Unit) {
     ) {
         Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
             Text(
-                text = "Limit Prime core boost",
+                text = strings.primeBoostLabel,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = "Caps the top frequency bin — trades peak spikes for cooler, sustained performance.",
+                text = strings.primeBoostDesc,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -1175,21 +1184,21 @@ private fun PrimeBoostLimitRow(limited: Boolean, onToggle: (Boolean) -> Unit) {
 }
 
 /** Friendly role + one-line caption for a CPU cluster (or the GPU), by order and core count. */
-private fun clusterRole(policy: CpuPolicyInfo, policies: List<CpuPolicyInfo>): Pair<String, String?> {
+private fun clusterRole(policy: CpuPolicyInfo, policies: List<CpuPolicyInfo>, strings: PulseStrings): Pair<String, String?> {
     if (policy.isGpu) return "GPU" to null
     val cpu = policies.filterNot { it.isGpu }.sortedBy { it.id }
     val n = cpu.size
     val idx = cpu.indexOfFirst { it.id == policy.id }
-    if (n <= 1 || idx < 0) return "CPU" to "Main processor cores"
+    if (n <= 1 || idx < 0) return strings.clusterRoleCpu to strings.clusterCaptionCpu
     val name = when (idx) {
-        0 -> "Efficiency"
-        n - 1 -> "Prime"
-        else -> "Performance"
+        0 -> strings.clusterRoleEfficiency
+        n - 1 -> strings.clusterRolePrime
+        else -> strings.clusterRolePerformance
     }
-    val caption = when (name) {
-        "Efficiency" -> "Light-load cores for battery life"
-        "Prime" -> if (policy.cpuIds.size <= 1) "Single big core for peak speed" else "Big cores for peak speed"
-        else -> "Mid cores for sustained load"
+    val caption = when (idx) {
+        0 -> strings.clusterCaptionEfficiency
+        n - 1 -> if (policy.cpuIds.size <= 1) strings.clusterCaptionPrimeSingle else strings.clusterCaptionPrimeMulti
+        else -> strings.clusterCaptionPerformance
     }
     return name to caption
 }
@@ -1205,6 +1214,7 @@ private fun PolicyCard(
     clusterName: String = if (policy.isGpu) "GPU" else "Cluster ${policy.id}",
     clusterCaption: String? = null,
 ) {
+    val strings = LocalPulseStrings.current
     val supported = policy.supportedFrequencies
     val displaySelectedValue = policy.clampToWritableMax(selectedValue)
     val currentIndex = supported.indexOf(displaySelectedValue).takeIf { it >= 0 } ?: supported.lastIndex
@@ -1261,7 +1271,7 @@ private fun PolicyCard(
                 shape = RoundedCornerShape(999.dp),
             ) {
                 Text(
-                    text = "Current ${formatFrequency(actualValue, boosted = policy.isBoosted(actualValue))}",
+                    text = String.format(strings.currentFreqLabel, formatFrequency(actualValue, boosted = policy.isBoosted(actualValue))),
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.labelMedium,
                     color = if (actualSatisfiesSelected) {

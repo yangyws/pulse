@@ -24,6 +24,15 @@ interface PulseStrings {
     val confirm: String
     val ok: String
     val unavailable: String
+    val noneStr: String
+    val inheritStr: String
+    val off: String
+    val on: String
+    val maxStr: String
+    val hourUnit: String
+    val minuteUnit: String
+    val systemColors: String
+    val selectProfile: String
 
     // Settings Screen
     val settingsTitle: String
@@ -33,6 +42,16 @@ interface PulseStrings {
     val masterSwitchDesc: String
     val appearanceTitle: String
     val themeLabel: String
+    val themeSignalLabel: String
+    val themeSignalTagline: String
+    val themeCrimsonLabel: String
+    val themeCrimsonTagline: String
+    val themeCyberpunkLabel: String
+    val themeCyberpunkTagline: String
+    val themeRoninLabel: String
+    val themeRoninTagline: String
+    val themeAdAstraLabel: String
+    val themeAdAstraTagline: String
     val languageSectionTitle: String
     val languageLabel: String
     val quickSettingsTitle: String
@@ -57,12 +76,32 @@ interface PulseStrings {
     val perAppConfigureButton: String
     val perAppSwitchNotices: String
     val perAppSwitchNoticesDesc: String
+    val appsConfiguredSingular: String
+    val appsConfiguredPlural: String
     val overlaySectionTitle: String
     val inGameOverlaySwitch: String
     val inGameOverlayDesc: String
     val overlayPresetLabel: String
+    val overlayPresetCompact: String
+    val overlayPresetDetailed: String
+    val overlayPresetFull: String
     val overlayOpacityLabel: String
     val overlayElementsLabel: String
+    val overlayElementsHelpText: String
+    val overlayGroupFrameRate: String
+    val overlayGroupGpu: String
+    val overlayGroupCpu: String
+    val overlayGroupSystem: String
+    val overlayGroupStatus: String
+    val overlayItemFpsTrend: String
+    val overlayItemLoad: String
+    val overlayItemClock: String
+    val overlayItemTemp: String
+    val overlayItemCoreBars: String
+    val overlayItemPower: String
+    val overlayItemTimeLeft: String
+    val overlayItemTimer: String
+    val overlayItemChipName: String
     val quickAccessSectionTitle: String
     val quickAccessSwitch: String
     val quickAccessDesc: String
@@ -73,8 +112,17 @@ interface PulseStrings {
     val clearComboButton: String
     val pressComboPrompt: String
     val rgbSectionTitle: String
+    val rgbHelpText: String
     val rgbModeLabel: String
     val rgbTargetStickLabel: String
+    val rgbModeBattery: String
+    val rgbModeHeat: String
+    val rgbModeManual: String
+    val rgbStickLeft: String
+    val rgbStickRight: String
+    val rgbStickBoth: String
+    val rgbColorLabel: String
+    val rgbBrightnessLabel: String
     val backupSectionTitle: String
     val exportProfilesTitle: String
     val exportProfilesDesc: String
@@ -84,26 +132,60 @@ interface PulseStrings {
     val resetProfilesDesc: String
     val resetProfilesConfirmTitle: String
     val resetProfilesConfirmMsg: String
+    val aboutSectionTitle: String
+    val aboutDescription: String
 
     // Main Tuner Screen
     val tunerTitle: String
+    val tunerSubtitle: String
     val powerTiersTitle: String
-    val tierPowerSaving: String
-    val tierBalanced: String
-    val tierMax: String
-    val tierCustom: String
+    val tierMaxLabel: String
+    val tierMaxTagline: String
+    val tierBalancedLabel: String
+    val tierBalancedTagline: String
+    val tierPowerSavingLabel: String
+    val tierPowerSavingTagline: String
+    val tierCustomLabel: String
+    val tierCustomTagline: String
     val profilesTitle: String
     val newProfile: String
+    val currentValuesTitle: String
+    val pserverLinked: String
+    val pserverUnavailable: String
+    val manualControlAll: String
+    val manualControlCpuLocked: String
+    val manualControlLockedPower: String
+    val clusterRolePrime: String
+    val clusterRolePerformance: String
+    val clusterRoleEfficiency: String
+    val clusterRoleCpu: String
+    val clusterCaptionPrimeSingle: String
+    val clusterCaptionPrimeMulti: String
+    val clusterCaptionPerformance: String
+    val clusterCaptionEfficiency: String
+    val clusterCaptionCpu: String
+    val currentFreqLabel: String
+    val applyProfileLabel: String
+    val selectProfilePrompt: String
+    val deleteProfileTitle: String
+    val deleteProfileConfirmMsg: String
+    val scanningCpuClusters: String
+    val scanningCpuClustersProgress: String
+    val noCpuClustersFound: String
+    val noCompatibleCpuClusters: String
     val cpuSectionTitle: String
     val cpuPoliciesLabel: String
     val cpuGovernorLabel: String
     val cpuFloorLabel: String
+    val cpuFloorDesc: String
     val primeBoostLabel: String
     val primeBoostDesc: String
     val gpuSectionTitle: String
     val gpuClockLabel: String
     val gpuLockLabel: String
+    val gpuLockDesc: String
     val gpuFloorLabel: String
+    val gpuFloorDesc: String
     val fanSectionTitle: String
     val fanModeLabel: String
     val fanModeQuiet: String
@@ -116,22 +198,201 @@ interface PulseStrings {
     val fanCurveLabel: String
     val fanBiasCooler: String
     val fanBiasQuieter: String
+    val fanCoolLabel: String
+    val fanQuietLabel: String
+    val fanPercentLabel: String
+    val tempCelsiusLabel: String
+    val fanResponseTitle: String
+    val fanResponseStatus: String
+    val fanAutoCalibrate: String
+    val fanCalibrating: String
+    val fanCurveHelpText: String
     val displaySectionTitle: String
     val resolutionLabel: String
+    val resolutionNative: String
     val refreshRateLabel: String
+    val powerTargetTitle: String
+    val powerTargetCpuOnly: String
+    val powerTargetDescAll: String
+    val powerTargetDescCpuOnly: String
     val autoTdpTitle: String
     val autoTdpSwitch: String
+    val autoTdpAutoTuneGames: String
+    val autoTdpDescOn: String
+    val autoTdpDescOff: String
     val autoTdpFpsTarget: String
+    val autoTdpAggressivePark: String
+    val autoTdpAggressiveParkDesc: String
+    val autoTdpEfficiencyTitle: String
     val autoTdpBiasLabel: String
     val autoTdpParkCores: String
+    val autoTdpBiasEfficient: String
+    val autoTdpBiasBalanced: String
+    val autoTdpBiasSmooth: String
+    val autoTdpBiasDescEfficient: String
+    val autoTdpBiasDescBalanced: String
+    val autoTdpBiasDescSmooth: String
+    val autoTdpWattCapPrefix: String
     val telemetryHudTitle: String
+    val hudCpuLoad: String
+    val hudBattery: String
+    val hudCpuTemp: String
+    val hudGpuTemp: String
+    val hudDraw: String
+    val hudEstPeak: String
 
     // Per-App Screen
     val perAppScreenTitle: String
+    val perAppSubtitle: String
     val searchAppsHint: String
     val allAppsTab: String
     val configuredAppsTab: String
     val noAppsFound: String
     val profileBindingLabel: String
     val inheritGlobalProfile: String
+    val notConfigured: String
+    val savedProfileStr: String
+    val tunedBadge: String
+    val learningBadge: String
+    val avgPowerDraw: String
+    val perAppDialogProfile: String
+    val perAppDialogFan: String
+    val perAppDialogFpsTarget: String
+    val perAppDialogAggressivePark: String
+    val perAppDialogEfficiency: String
+    val perAppDialogRefreshRate: String
+    val perAppRemoveButton: String
+    val perAppHelpText: String
+
+    // Quick Access Overlay Panel
+    val qaTabPerformance: String
+    val qaTabFan: String
+    val qaTabRgb: String
+    val qaTabOverlay: String
+    val qaTabSystem: String
+    val qaFooterNav: String
+    val qaStockMode: String
+    val qaStockModeDescGame: String
+    val qaStockModeDescGlobal: String
+    val qaPowerTargetLabel: String
+    val qaGpuCapLabel: String
+    val qaFrameTargetLabel: String
+    val qaBiasLabel: String
+    val qaAggressiveParkLabel: String
+    val qaFanModeLabel: String
+    val qaHoldTargetTempLabel: String
+    val qaTargetTempLabel: String
+    val qaCoolerQuieterLabel: String
+    val qaRgbModeLabel: String
+    val qaShowOverlayLabel: String
+    val qaDensityLabel: String
+    val qaBrightnessLabel: String
+    val qaVolumeLabel: String
+    val qaScopeProfileTitle: String
+    val qaScopePerGame: String
+    val qaScopeGlobal: String
+    val qaScopeApplyCreate: String
+    val qaScopeApplyRemove: String
+    val qaScopeApply: String
+    val qaFlashCreated: String
+    val qaFlashEditing: String
+    val qaFlashRemoved: String
+    val qaFlashFollowing: String
+    val qaCoolerBiasFormat: String
+    val qaQuieterBiasFormat: String
+    val qaAutoTdpDesc: String
+    val qaColorApplied: String
+    val qaModePrefix: String
+    val qaFanCooler: String
+    val qaFanQuieter: String
+    val qaFanBiasLabel: String
+
+    // Common Toasts & Dialog Messages
+    val toastPermissionOverlay: String
+    val toastPermissionUsage: String
+    val toastAutoTdpEnabled: String
+    val toastOverlayEnabled: String
+    val toastPerAppEnabled: String
+    val toastQuickAccessEnabled: String
+    val toastTileAdded: String
+    val toastTileAlreadyAdded: String
+    val toastTileNotAdded: String
+    val toastTileFailed: String
+    val toastTileUnavailable: String
+    val toastExportSuccess: String
+    val toastExportFailed: String
+    val toastImportSuccess: String
+    val toastImportFailed: String
+    val toastSettingsRestored: String
+    val toastAppliedTier: String
+    val toastAppliedProfile: String
+    val toastAppliedManual: String
+    val toastApplyFailed: String
+    val toastFailedToApply: String
+    val toastFailedPowerTarget: String
+    val toastPowerTargetSet: String
+    val toastCpuFloorCleared: String
+    val toastCpuFloorSet: String
+    val toastGpuFloorCleared: String
+    val toastGpuFloorSet: String
+    val toastGpuLocked: String
+    val toastGpuUnlocked: String
+    val toastGpuNotFound: String
+    val toastPrimeNotFound: String
+    val toastPrimeBoostLimited: String
+    val toastPrimeBoostRestored: String
+    val toastFanSet: String
+    val toastFanCalibrating: String
+    val toastFanCalibrated: String
+    val toastFanUnavailable: String
+    val toastFanChangeFailed: String
+    val toastGovernorSet: String
+    val toastGovernorFailed: String
+    val toastRefreshRateSet: String
+    val toastRenderScaleSet: String
+    val toastResolutionReset: String
+    val toastResolutionFailed: String
+    val toastProfileNameRequired: String
+    val toastProfileNameExists: String
+    val toastProfileSaved: String
+    val toastProfileUpdated: String
+    val toastProfileDeleted: String
+    val toastProfilesImportCount: String
+    val toastProfilesResetDone: String
+    val scanningClusters: String
+    val profileName: String
+    val applyCustomValues: String
+    val notifyWatchingApps: String
+    val notifyPerAppTitle: String
+    val notifyMoveOverlay: String
+    val notifyOverlayLocked: String
+    val notifyOverlayUnlocked: String
+    val notifySleepChannelName: String
+    val notifySleepChannelDesc: String
+    val notifySleepTitle: String
+    val notifySleepContent: String
+    val toastFanReapplied: String
+    val toastCustomAdjustInApp: String
+    val osdDrag: String
+    val osdLayout: String
+    val osdLock: String
+    val osdThermal: String
+    val osdLeft: String
+    val osdFull: String
+    val osdAvg: String
+    val osdLow: String
+    val osdPark: String
+    val errorPserverUnavailable: String
+    val errorNoCpuClusters: String
+    val errorNoCustomConfig: String
+    val errorNoGpuPolicy: String
+    val errorProfileUnavailable: String
+    val errorSleepProfileUnavailable: String
+    val errorNoSleepRestoreState: String
+    val errorNoStoredValues: String
+    val errorNoStoredValuesMatch: String
+    val errorTileUnavailable: String
+    val errorNoProfilesForCycling: String
+    val verifyRequested: String
+    val verifyActual: String
 }
