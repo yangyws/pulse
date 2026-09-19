@@ -117,10 +117,17 @@ Write-Host "`n[3/4] 正在將 APK 安裝/部屬至設備 ($deviceId)..." -Foregr
 $installOutput = & $adbCmd -s $deviceId install -r -d $targetApk 2>&1
 Write-Host $installOutput
 
+if ($installOutput -match "INSTALL_FAILED_UPDATE_INCOMPATIBLE") {
+    Write-Host "[提示] 檢測到簽章不相符（切換本地/雲端編譯產出），正在為您自動解除舊版並重新安裝..." -ForegroundColor Magenta
+    & $adbCmd -s $deviceId uninstall com.kei.pulse.zh | Out-Null
+    $installOutput = & $adbCmd -s $deviceId install -r -d $targetApk 2>&1
+    Write-Host $installOutput
+}
+
 if ($installOutput -match "Success") {
     Write-Host "[成功] APK 已成功部屬至設備！" -ForegroundColor Green
 } else {
-    Write-Host "[警告] 安裝過程若出現簽章不符，請先將掌機上的舊版 App 解除安裝後重試。" -ForegroundColor Yellow
+    Write-Host "[警告] 安裝未完成，請檢查上方 ADB 訊息。" -ForegroundColor Yellow
 }
 
 # 5. 啟動 App
