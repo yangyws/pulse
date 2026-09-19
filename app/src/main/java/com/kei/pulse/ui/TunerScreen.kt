@@ -531,6 +531,7 @@ private fun Header(
     onOpenSettings: (() -> Unit)?,
 ) {
     if (compactMode && state.statusMessage == null && state.errorMessage == null) return
+    val strings = LocalPulseStrings.current
 
     Column(verticalArrangement = Arrangement.spacedBy(if (compactMode) 2.dp else 8.dp)) {
         if (!compactMode) {
@@ -1018,6 +1019,7 @@ private fun ProfileEditorDialog(
     onSave: (String, Map<Int, Int>) -> Unit,
     onDelete: () -> Unit,
 ) {
+    val strings = LocalPulseStrings.current
     val initialValues = remember(profile?.id, creatingNewProfile, manualMode, baseState.actualValues) {
         baseState.policies.associate { policy ->
             val initialValue = when {

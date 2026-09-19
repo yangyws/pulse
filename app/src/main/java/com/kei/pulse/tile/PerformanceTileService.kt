@@ -23,7 +23,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import com.kei.pulse.i18n.PulseStrings
 import com.kei.pulse.i18n.resolvePulseStrings
-import com.kei.pulse.model.AppLanguage
+import com.kei.pulse.i18n.AppLanguage
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
