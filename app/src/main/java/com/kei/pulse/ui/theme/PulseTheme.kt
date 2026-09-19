@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.kei.pulse.i18n.LocalPulseStrings
@@ -178,7 +180,10 @@ fun PulseTheme(
         typography = PulseTypography,
         shapes = PulseShapes,
     ) {
-        val strings = resolvePulseStrings(settings.appLanguage)
+        val context = LocalContext.current
+        val strings = remember(context, settings.appLanguage) {
+            resolvePulseStrings(settings.appLanguage, context)
+        }
         CompositionLocalProvider(
             LocalPulseThemeId provides settings.themeId,
             LocalPulseStrings provides strings,

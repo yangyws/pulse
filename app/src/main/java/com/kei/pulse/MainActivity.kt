@@ -28,6 +28,7 @@ import com.kei.pulse.sleep.SleepProfileMonitorService
 import com.kei.pulse.tile.QuickSettingsTileAddResult
 import com.kei.pulse.tile.QuickSettingsTilePrompt
 import com.kei.pulse.tile.QuickSettingsTileRefresher
+import com.kei.pulse.i18n.LocaleHelper
 import com.kei.pulse.i18n.PulseStrings
 import com.kei.pulse.i18n.resolvePulseStrings
 import com.kei.pulse.ui.FanCurveEditorBindings
@@ -38,7 +39,9 @@ import com.kei.pulse.ui.TunerViewModel
 import com.kei.pulse.ui.theme.LocalThermalHeat
 import com.kei.pulse.ui.theme.PulseTheme
 import com.kei.pulse.ui.theme.heatForTier
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -86,6 +89,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         maybeRequestQuickSettingsTileOnFirstRun()
         maybePromptBatteryExemption()
+
+        lifecycleScope.launch {
+            viewModel.settings.map { it.appLanguage }.distinctUntilChanged().collect { lang ->
+                LocaleHelper.applyLanguage(this@MainActivity, lang)
+            }
+        }
 
         setContent {
             val settings = viewModel.settings.collectAsStateWithLifecycle().value
