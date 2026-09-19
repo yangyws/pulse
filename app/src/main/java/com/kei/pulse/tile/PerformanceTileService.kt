@@ -21,7 +21,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import com.kei.pulse.i18n.PulseStrings
 import com.kei.pulse.i18n.resolvePulseStrings
+import com.kei.pulse.model.AppLanguage
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -177,10 +179,11 @@ class PerformanceTileService : TileService() {
 
     private fun handleTap() {
         serviceScope.launch {
+            val container = AppContainer(applicationContext)
+            val settings = runCatching { container.settingsStorage.settings.first() }.getOrNull()
             runCatching {
-                val container = AppContainer(applicationContext)
-                val settings = container.settingsStorage.settings.first()
-                when (settings.tileTapBehavior) {
+                val currentSettings = settings ?: container.settingsStorage.settings.first()
+                when (currentSettings.tileTapBehavior) {
                     TileInteractionBehavior.SHOW_DIALOG ->
                         withContext(Dispatchers.Main) { launchDialogAndCollapse() }
                     TileInteractionBehavior.OPEN_APP ->
@@ -189,7 +192,7 @@ class PerformanceTileService : TileService() {
                 }
             }.onFailure { throwable ->
                 Log.e(TAG, "Failed to handle tile tap", throwable)
-                val strings = resolvePulseStrings(settings.appLanguage)
+                val strings = resolvePulseStrings(settings?.appLanguage ?: AppLanguage.SYSTEM)
                 showToast(throwable.message ?: strings.toastTileFailed)
             }
         }

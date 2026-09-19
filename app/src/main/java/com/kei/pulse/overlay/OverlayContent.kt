@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kei.pulse.data.TelemetrySnapshot
 import com.kei.pulse.i18n.LocalPulseStrings
+import com.kei.pulse.i18n.PulseStrings
 import com.kei.pulse.model.OverlayElement
 import com.kei.pulse.model.OverlayPreset
 import kotlinx.coroutines.flow.StateFlow

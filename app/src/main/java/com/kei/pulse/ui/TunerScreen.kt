@@ -76,6 +76,7 @@ import com.kei.pulse.model.AutoTdpBias
 import com.kei.pulse.model.PowerTier
 import com.kei.pulse.ui.theme.HudBackground
 import com.kei.pulse.i18n.LocalPulseStrings
+import com.kei.pulse.i18n.PulseStrings
 import com.kei.pulse.model.CpuPolicyInfo
 import com.kei.pulse.model.PerformanceProfile
 import com.kei.pulse.model.ProfileStateResolver

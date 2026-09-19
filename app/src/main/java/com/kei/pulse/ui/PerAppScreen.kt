@@ -48,6 +48,7 @@ import com.kei.pulse.model.PowerTier
 import com.kei.pulse.model.ProfileSource
 import com.kei.pulse.model.ProfileStateResolver
 import com.kei.pulse.i18n.LocalPulseStrings
+import com.kei.pulse.i18n.PulseStrings
 import com.kei.pulse.ui.theme.HudBackground
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
