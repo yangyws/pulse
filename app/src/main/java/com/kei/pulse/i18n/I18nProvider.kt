@@ -12,19 +12,13 @@ fun resolvePulseStrings(language: AppLanguage): PulseStrings {
         AppLanguage.SYSTEM -> {
             val locale = Locale.getDefault()
             val lang = locale.language
-            val country = locale.country
             if (lang.equals("zh", ignoreCase = true)) {
-                if (country.equals("CN", ignoreCase = true) || country.equals("SG", ignoreCase = true)) {
-                    ZhCnStrings
-                } else {
-                    ZhTwStrings
-                }
+                ZhTwStrings
             } else {
                 EnStrings
             }
         }
         AppLanguage.ZH_TW -> ZhTwStrings
-        AppLanguage.ZH_CN -> ZhCnStrings
         AppLanguage.EN -> EnStrings
     }
 }
