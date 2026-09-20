@@ -152,28 +152,13 @@ PULSE 透過單一 **鎖定目標溫度 (Hold Target Temp)** 開關，提供兩�
 
 ## 安裝與初次使用
 
-### 方式一：手動安裝 APK
-
-1. 至 [Releases](https://github.com/keiretrogaming/pulse/releases) 頁面下載最新版 APK 並完成安裝（可能需在系統中允許「安裝未知來源應用程式」）。
-2. 初次啟動時授予以下兩項必要權限：
-   - **使用情況存取權限 (Usage Access)** —— 讓 PULSE 能辨識當前前景遊戲（用於個別遊戲設定檔自動切換與 AutoTDP 調節）。
+1. **下載最新版 APK**：至 [Releases](https://github.com/keiretrogaming/pulse/releases) 頁面下載最新版 APK 並完成安裝（可能需在系統中允許「安裝未知來源應用程式」）。
+2. **初次啟動時授予兩項必要權限**：
+   - **使用量存取權限 (Usage Access)** —— 讓 PULSE 能辨識當前前景遊戲（用於個別遊戲設定檔自動切換與 AutoTDP 調節）。
    - **顯示於其他應用程式上層 (Display over other apps)** —— 供 OSD 浮動面板懸浮於遊戲畫面上顯示。
 3. **完成設定 —— 全程絕不跳出任何 Root 授權請求。** 若裝置缺少內建 `PServerBinder` 系統服務，PULSE 將主動提示裝置不相容。
 
 系統要求：Android 12+ (`minSdk 31`)。
-
-### 方式二：ADB 一鍵自動部署（開發與快速測試）
-
-本專案提供專屬自動部署指令碼，支援本機偵測、授權檢查、APK 自動推播安裝與啟動：
-
-- **Windows 使用者**：直接點擊執行根目錄下的 `deploy.bat`，或在 PowerShell 中執行：
-  ```powershell
-  .\deploy.ps1
-  ```
-- 指令碼將自動：
-  1. 檢查 ADB 連線狀態與裝置授權。
-  2. 優先搜尋本地編譯之 APK，若無則自動自 GitHub Actions 抓取最新產物。
-  3. 自動安裝/升級至掌機裝置，並即時啟動 PULSE 繁體中文版！
 
 ### 快速上手指南（新手 5 分鐘教學）
 
