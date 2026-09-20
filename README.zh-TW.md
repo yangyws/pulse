@@ -6,10 +6,10 @@
 
 *專為遊戲掌機打造的免 Root 效能調校神器 —— 賦予掌機智慧大腦。*
 
-[English](README.en.md) | **台灣繁體中文**
+[English](README.md) | **台灣繁體中文**
 
-![GitHub 下載量 (所有版本)](https://img.shields.io/github/downloads/yangyws/pulse-zh/total)
-![GitHub Release](https://img.shields.io/github/v/release/yangyws/pulse-zh)
+![GitHub 下載量 (所有版本)](https://img.shields.io/github/downloads/keiretrogaming/pulse/total)
+![GitHub Release](https://img.shields.io/github/v/release/keiretrogaming/pulse)
 ![Android](https://img.shields.io/badge/Android-12%2B-3DDC84?logo=android&logoColor=white)
 ![免 Root](https://img.shields.io/badge/root-%E5%85%8D%20Root-brightgreen)
 ![授權條款](https://img.shields.io/badge/%E6%8E%88%E6%AC%8A%E6%A2%9D%E6%AC%BE-GPL%20v2.0-blue)
@@ -154,7 +154,7 @@ PULSE 透過單一 **鎖定目標溫度 (Hold Target Temp)** 開關，提供兩�
 
 ### 方式一：手動安裝 APK
 
-1. 至 [Releases](https://github.com/yangyws/pulse-zh/releases) 頁面下載最新版 APK 並完成安裝（可能需在系統中允許「安裝未知來源應用程式」）。
+1. 至 [Releases](https://github.com/keiretrogaming/pulse/releases) 頁面下載最新版 APK 並完成安裝（可能需在系統中允許「安裝未知來源應用程式」）。
 2. 初次啟動時授予以下兩項必要權限：
    - **使用情況存取權限 (Usage Access)** —— 讓 PULSE 能辨識當前前景遊戲（用於個別遊戲設定檔自動切換與 AutoTDP 調節）。
    - **顯示於其他應用程式上層 (Display over other apps)** —— 供 OSD 浮動面板懸浮於遊戲畫面上顯示。

@@ -1,4 +1,4 @@
-﻿param(
+param(
     [string]$ApkPath = "",
     [switch]$LaunchApp = $true
 )
@@ -7,7 +7,7 @@ $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host "==========================================" -ForegroundColor Cyan
-Write-Host "  PULSE-zh 掌機/設備自動部屬工具 (ADB)    " -ForegroundColor Cyan
+Write-Host "  PULSE-zh 掌機/裝置自動部署工具 (ADB)    " -ForegroundColor Cyan
 Write-Host "==========================================" -ForegroundColor Cyan
 
 # 1. 檢查 ADB 工具
@@ -21,22 +21,22 @@ if (-not (Get-Command adb -ErrorAction SilentlyContinue)) {
     }
 }
 
-# 2. 檢查連接的設備
-Write-Host "`n[1/4] 檢查已連接的 Android 設備..." -ForegroundColor Yellow
+# 2. 檢查連接的裝置
+Write-Host "`n[1/4] 檢查已連接的 Android 裝置..." -ForegroundColor Yellow
 $rawLines = & $adbCmd devices
 $deviceLines = $rawLines | Where-Object { $_.Trim() -ne "" -and -not $_.StartsWith("List of") }
 
 if (-not $deviceLines) {
-    Write-Host "[警告] 未檢測到已連接的 Android 設備！" -ForegroundColor Red
+    Write-Host "[警告] 未偵測到已連接的 Android 裝置！" -ForegroundColor Red
     Write-Host "請確認：" -ForegroundColor Yellow
-    Write-Host " 1. 設備已透過 USB 連接電腦（或已使用 adb connect 進行無線調試）"
-    Write-Host " 2. 設備已開啟「開發者選項」與「USB 偵錯 (USB Debugging)」"
+    Write-Host " 1. 裝置已透過 USB 連接電腦（或已使用 adb connect 進行無線偵錯）"
+    Write-Host " 2. 裝置已開啟「開發者選項」與「USB 偵錯 (USB Debugging)」"
     exit 1
 }
 
 $unauthorized = $deviceLines | Where-Object { $_ -match "unauthorized" }
 if ($unauthorized) {
-    Write-Host "[提示] 檢測到設備尚未授權調試 (unauthorized)！" -ForegroundColor Magenta
+    Write-Host "[提示] 偵測到裝置尚未授權偵錯 (unauthorized)！" -ForegroundColor Magenta
     Write-Host "👉 請查看您的掌機/手機螢幕，會彈出「允許 USB 偵錯？」提示，請勾選「一律允許」並點擊「確定」。" -ForegroundColor Yellow
     Write-Host "等待授權中 (可按 Ctrl+C 中斷)..."
     while ($true) {
@@ -44,7 +44,7 @@ if ($unauthorized) {
         $rawLines = & $adbCmd devices
         $check = $rawLines | Where-Object { $_.Trim() -ne "" -and -not $_.StartsWith("List of") -and ($_ -match "\s+device\b") }
         if ($check) {
-            Write-Host "設備已成功授權！" -ForegroundColor Green
+            Write-Host "裝置已成功授權！" -ForegroundColor Green
             $deviceLines = $check
             break
         }
@@ -53,12 +53,12 @@ if ($unauthorized) {
 
 $connected = $deviceLines | Where-Object { $_ -match "\s+device\b" } | Select-Object -First 1
 if (-not $connected) {
-    Write-Host "[錯誤] 設備狀態非 device (可能離線或無法連接)。" -ForegroundColor Red
+    Write-Host "[錯誤] 裝置狀態非 device (可能離線或無法連接)。" -ForegroundColor Red
     exit 1
 }
 
 $deviceId = ($connected -split "\s+")[0]
-Write-Host "目標設備已就緒：$deviceId" -ForegroundColor Green
+Write-Host "目標裝置已就緒：$deviceId" -ForegroundColor Green
 
 # 3. 尋找 APK 檔案
 Write-Host "`n[2/4] 尋找待安裝的 APK 檔案..." -ForegroundColor Yellow
@@ -84,7 +84,7 @@ if (-not $targetApk -or -not (Test-Path $targetApk)) {
         }
         $headers = @{ "User-Agent" = "PowerShell" }
         if ($token) { $headers["Authorization"] = "token $token" }
-        $artifacts = Invoke-RestMethod -Uri "https://api.github.com/repos/yangyws/pulse/actions/artifacts" -Headers $headers
+        $artifacts = Invoke-RestMethod -Uri "https://api.github.com/repos/yangyws/pulse-zh/actions/artifacts" -Headers $headers
         $pulseArtifact = $artifacts.artifacts | Where-Object { $_.name -like "*pulse*" -and -not $_.expired } | Select-Object -First 1
         if ($pulseArtifact) {
             Write-Host "找到雲端編譯產出：$($pulseArtifact.name)，正在下載..." -ForegroundColor Green
@@ -113,19 +113,19 @@ if (-not $targetApk) {
 Write-Host "使用 APK: $targetApk" -ForegroundColor Green
 
 # 4. 安裝 APK
-Write-Host "`n[3/4] 正在將 APK 安裝/部屬至設備 ($deviceId)..." -ForegroundColor Yellow
+Write-Host "`n[3/4] 正在將 APK 安裝/部署至裝置 ($deviceId)..." -ForegroundColor Yellow
 $installOutput = & $adbCmd -s $deviceId install -r -d $targetApk 2>&1
 Write-Host $installOutput
 
 if ($installOutput -match "INSTALL_FAILED_UPDATE_INCOMPATIBLE") {
-    Write-Host "[提示] 檢測到簽章不相符（切換本地/雲端編譯產出），正在為您自動解除舊版並重新安裝..." -ForegroundColor Magenta
+    Write-Host "[提示] 偵測到簽章不相符（切換本地/雲端編譯產出），正在為您自動解除舊版並重新安裝..." -ForegroundColor Magenta
     & $adbCmd -s $deviceId uninstall com.kei.pulse.zh | Out-Null
     $installOutput = & $adbCmd -s $deviceId install -r -d $targetApk 2>&1
     Write-Host $installOutput
 }
 
 if ($installOutput -match "Success") {
-    Write-Host "[成功] APK 已成功部屬至設備！" -ForegroundColor Green
+    Write-Host "[成功] APK 已成功部署至裝置！" -ForegroundColor Green
 } else {
     Write-Host "[警告] 安裝未完成，請檢查上方 ADB 訊息。" -ForegroundColor Yellow
 }
@@ -137,4 +137,4 @@ if ($LaunchApp) {
     Write-Host "已啟動應用程式！" -ForegroundColor Green
 }
 
-Write-Host "`n部屬流程已完成！" -ForegroundColor Cyan
+Write-Host "`n部署流程已完成！" -ForegroundColor Cyan
