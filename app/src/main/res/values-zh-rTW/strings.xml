@@ -116,7 +116,7 @@
     <string name="clear_combo_button">清除按鍵</string>
     <string name="press_combo_prompt">請按下手把組合鍵 (例如 L3 + R3)…</string>
     <string name="rgb_section_title">RGB 燈效控制</string>
-    <string name="rgb_help_text">自訂搖桿周圍 LED 燈光。電量與溫度模式會依設備狀態自動變色；手動模式可獨立指定左右搖桿顏色。請確認系統設定中已開啟搖桿燈光。</string>
+    <string name="rgb_help_text">自訂搖桿周圍 LED 燈光。電量與溫度模式會依裝置狀態自動變色；手動模式可獨立指定左右搖桿顏色。請確認系統設定中已開啟搖桿燈光。</string>
     <string name="rgb_mode_label">RGB 模式</string>
     <string name="rgb_target_stick_label">調整搖桿</string>
     <string name="rgb_mode_battery">電量指示</string>
@@ -231,7 +231,7 @@
     <string name="auto_tdp_bias_efficient">省電優先 (Efficient)</string>
     <string name="auto_tdp_bias_balanced">平衡模式 (Balanced)</string>
     <string name="auto_tdp_bias_smooth">流暢優先 (Smooth)</string>
-    <string name="auto_tdp_bias_desc_efficient">平穩時極力壓低時脈以省電；僅在持續卡頓時升頻。耗電最低、運作最安靜 — 極限場景可能有極少許微頓。</string>
+    <string name="auto_tdp_bias_desc_efficient">平穩時極力壓低時脈以省電；僅在持續畫面頓挫時升頻。耗電最低、運作最安靜 — 極限場景可能有極少許微頓。</string>
     <string name="auto_tdp_bias_desc_balanced">折衷平衡 — 平穩運行時主動節能，但在即將掉幀前更早介入升頻防護。</string>
     <string name="auto_tdp_bias_desc_smooth">幀率防護優先，維持較高時脈以徹底避免掉幀。耗電與發熱相對較高。</string>
     <string name="auto_tdp_watt_cap_prefix">限制持續功耗於約 %s W — 機身散熱極限，超出時積熱將超過風扇排熱能力。</string>
@@ -314,7 +314,7 @@
     <string name="toast_tile_already_added">快捷圖塊已存在</string>
     <string name="toast_tile_not_added">未新增快捷圖塊</string>
     <string name="toast_tile_failed">新增快捷圖塊失敗</string>
-    <string name="toast_tile_unavailable">此設備不支援自動新增快捷圖塊提示</string>
+    <string name="toast_tile_unavailable">此裝置不支援自動新增快捷圖塊提示</string>
     <string name="toast_export_success">已成功匯出設定檔</string>
     <string name="toast_export_failed">匯出設定檔失敗</string>
     <string name="toast_import_success">已成功匯入設定檔</string>
@@ -340,7 +340,7 @@
     <string name="toast_fan_set">風扇已設為 %s</string>
     <string name="toast_fan_calibrating">正在校準風扇 — 測試轉速中 (約 15 秒)…</string>
     <string name="toast_fan_calibrated" formatted="false">風扇已校準 · 待機 %d%% · 舒適 %d%% · 最大 %d RPM</string>
-    <string name="toast_fan_unavailable">此設備不支援自訂風扇曲線</string>
+    <string name="toast_fan_unavailable">此裝置不支援自訂風扇曲線</string>
     <string name="toast_fan_change_failed">無法變更風扇模式</string>
     <string name="toast_governor_set">CPU 調速器：%s</string>
     <string name="toast_governor_failed">無法設定調速器</string>
