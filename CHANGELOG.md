@@ -36,3 +36,31 @@
   * 部署至 AYN Thor 實機設備（`d7195880`），實測「跟隨系統」、「繁體中文 (台灣)」、「English」三者即時熱切換功能正常，UI 顯示流暢。
 * **關聯索引與後續提醒**：
   * 後續若在專案中新增任何 UI 文字，一律只能加在 `res/values/strings.xml` 與 `res/values-zh-rTW/strings.xml`，嚴禁新建 Kotlin 字串字典類別。
+
+---
+
+## 🔖 [MOD-20260920-09] 專案儲存庫更名 pulse-zh、台灣繁體中文 README 製作與自動部署規範化
+
+* **修改日期**：2026-09-20
+* **目標分支**：`main-zh` / `pr/i18n-standard-localization`
+* **修改分類**：`[儲存庫維護 / 文件在地化 / 自動部署最佳化]`
+* **涉及檔案清單**：
+  * 新增：`README.en.md`（原英文版備份，頂部新增雙向切換導覽標頭）
+  * 新增：`README.zh-TW.md`（面向上游母專案標準格式，頂部含 `[English](README.md) | **台灣繁體中文**`）
+  * 修改：`README.md`（全文台灣繁體中文高質感在地化製作，頂部含 `[English](README.en.md) | **台灣繁體中文**`，含 AutoTDP、自訂風扇、OSD、RGB、PServer 免 Root 原理與 ADB 自動部署教學）
+  * 修改：`deploy.ps1`（更新 GitHub API 下載路徑為 `yangyws/pulse-zh`，並將所有終端機提示字串全面校正為台灣科技用語：裝置、部署、偵錯、偵測）
+  * 修改：`CHANGELOG.md`（記錄本追溯索引標籤與各項維護歷程）
+* **修改動機與問題**：
+  1. 儲存庫依規劃由 `yangyws/pulse` 更名為 `yangyws/pulse-zh`，以突顯台灣在地化版本定位，本機遠端儲存庫與部署指令碼需同步更新。
+  2. 提供台灣繁體中文使用者最完整、親切且專業之掌機效能調校說明文件，並為上游母專案 `keiretrogaming/pulse` 提供獨立的 `README.zh-TW.md`。
+* **技術方案與關鍵決策**：
+  1. **GitHub REST API 更名**：透過 PATCH API 成功將 GitHub 儲存庫重新命名為 `pulse-zh`。
+  2. **雙向語系導覽與 100% 台灣在地化**：README 文件全面遵循台灣標準科技用語，杜絕簡體字與大陸用語；建立完整目錄與功能說明。
+  3. **母專案與本地雙軌相容**：本地預設繁體中文版 `README.md`，英文版備份為 `README.en.md`；面向上游 PR 則提供標準 `README.zh-TW.md` 與英文主文件連動。
+  4. **上游 PR #22 聯絡反饋**：於母專案 PR #22 留言說明已完成 `README.zh-TW.md` 文件翻譯，隨時可供併入。
+* **測試與驗證結果**：
+  * GitHub REST API 呼叫回傳 200 成功更名。
+  * 本地 Git remote origin URL 更新為 `https://github.com/yangyws/pulse-zh.git`。
+  * 自動化正規表達式比對通過，0 個簡體字、0 個中國大陸用語。
+  * `main-zh` 與 `pr/i18n-standard-localization` 經授權已同步推送到遠端儲存庫。
+
