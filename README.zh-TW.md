@@ -107,7 +107,7 @@ PULSE 透過單一 **鎖定目標溫度 (Hold Target Temp)** 開關，提供兩�
 - **GPU 頻率上限** —— 透過 Adreno 效能等級索引 (Power-level index) 進行精確限頻（這是 GPU 調節器實際遵從的底層控制項）。
 - **CPU 與 GPU 最低頻率下限 (Floors)** —— 將任一側的最低時脈維持在指定比例以上，換取更穩定的畫面幀生成時間 (Frame Pacing)。
 - **超大核 (Prime Core) 升頻限制** —— 僅限制超大核心叢集的最高頻率，不影響其他核心效能的同時大幅抑制作業發熱。
-- **四檔效能設定 (Power Tiers)** —— 3A極限 (AAA/Max)、平衡 (Balanced)、省電 (Power Saving) 與自訂 (Custom)。Snapdragon 處理器無硬體可編程瓦數上限，因此各檔位皆是藉由 CPU + GPU 頻率組合與裝置實際 OPP 頻率表所構築的最佳化功耗包絡線。
+- **四檔效能設定 (Power Tiers)** —— 3A極限 (AAA/Max)、平衡 (Balanced)、省電 (Power Saving) 與自訂 (Custom)。Snapdragon 處理器無硬體可程式化瓦數上限，因此各檔位皆是藉由 CPU + GPU 頻率組合與裝置實際 OPP 頻率表所構築的最佳化功耗包絡線。
 - **功耗目標 (Power Target)** —— 仿照 PC TDP 概念的單一主控滑桿，能依比例同步縮放所有 CPU 叢集與 GPU 上限（亦可切換為僅調控 CPU）。
 - **顯示設定** —— 渲染解析度縮放 (降低渲染解析度以釋放 GPU 餘裕，且完全可逆) 與螢幕更新頻率切換。
 
