@@ -1,10 +1,15 @@
 name: Build PULSE APK
 
-# Builds a debug APK in the cloud and attaches it to the run as a download.
+# Builds an APK in the cloud and attaches it to the run as a download.
 # Runs on every push, and can be triggered manually from the Actions tab.
 on:
   push:
+    branches:
+      - main-zh
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -27,9 +32,38 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 
+      - name: Prepare APK
+        run: |
+          mkdir -p output_apks
+          find app/build/outputs/apk -type f -name "*.apk" -exec cp {} output_apks/ \;
+          APK_FILE=$(find output_apks -name "*.apk" | head -n 1)
+          if [ -n "$APK_FILE" ]; then
+            cp "$APK_FILE" output_apks/pulse-zh.apk
+          fi
+          ls -la output_apks/
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: pulse-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: pulse-apk
+          path: output_apks/*.apk
           if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: github.ref == 'refs/heads/main-zh'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.19.6-zh
+          name: "PULSE-zh v1.19.6 掌機繁體中文共存版"
+          body: |
+            ### 🎮 PULSE-zh v1.19.6 掌機繁體中文共存版
+
+            - **掌機獨立包名**：`com.kei.pulse.zh`（可與官方原版並存安裝，互不衝突）
+            - **完整在地化**：100% 台灣繁體中文前端介面支援
+            - **原生語系架構**：相容 Android 13+ 原生多語系熱切換
+          files: output_apks/pulse-zh.apk
+          draft: false
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
