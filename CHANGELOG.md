@@ -4,6 +4,28 @@
 
 ---
 
+## 🔖 [MOD-20260922-04] 支援雙規格產出：獨立共存版與原版取代版自動建置與 Release 發布
+
+* **修改日期**：2026-09-22
+* **目標分支**：`main-zh`
+* **修改分類**：`[建置架構增強 / 多規格發布 / 自動化建置]`
+* **涉及檔案清單**：
+  * 修改：`app/build.gradle.kts`
+  * 修改：`.github/workflows/build.yml`
+  * 修改：`CHANGELOG.md`
+* **修改動機與問題**（Why）：
+  * 為滿足掌機使用者「獨立共存測試」以及「直接覆蓋原版供系統服務/前端無縫接手」之雙向需求。先前僅產出共存版（`com.kei.pulse.zh`），無法直接覆蓋原版 PULSE（`com.kei.pulse`）。
+* **技術方案與關鍵決策**（How）：
+  1. 在 `app/build.gradle.kts` 中將 `applicationId` 支援 `(project.findProperty("customAppId") as String?) ?: "com.kei.pulse.zh"` 動態指定。
+  2. 調整 GitHub Actions 工作流，連續建置產出：
+     - `PULSE-v1.19.6-coexist-zh.apk`（套件名：`com.kei.pulse.zh`）
+     - `PULSE-v1.19.6-replace-zh.apk`（套件名：`com.kei.pulse`）
+  3. 更新 GitHub Release 說明與資產發布，檔名皆嚴格遵守小寫 `-zh.apk` 規範。
+* **測試與驗證結果**（Verification）：
+  * 工作流與 Gradle 設定語法檢驗正確。
+
+---
+
 ## 🔖 [MOD-20260921-10] 移除無版本號 APK 並統一 Releases 產物為 PULSE-v1.19.6-zh.apk
 
 * **修改日期**：2026-09-21

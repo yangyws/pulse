@@ -29,16 +29,21 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
-
-      - name: Prepare APK
+      - name: Build debug APKs (Coexistence & Replacement)
         run: |
           mkdir -p output_apks
-          APK_FILE=$(find app/build/outputs/apk -type f -name "*.apk" | head -n 1)
-          if [ -n "$APK_FILE" ]; then
-            cp "$APK_FILE" output_apks/PULSE-v1.19.6-zh.apk
-          fi
+
+          # 1. 建置獨立共存版 (com.kei.pulse.zh)
+          ./gradlew assembleDebug -PcustomAppId=com.kei.pulse.zh --no-daemon --stacktrace
+          APK_COEXIST=$(find app/build/outputs/apk -type f -name "*.apk" | head -n 1)
+          cp "$APK_COEXIST" output_apks/PULSE-v1.19.6-coexist-zh.apk
+          rm -rf app/build/outputs/apk
+
+          # 2. 建置原版取代版 (com.kei.pulse)
+          ./gradlew assembleDebug -PcustomAppId=com.kei.pulse --no-daemon --stacktrace
+          APK_REPLACE=$(find app/build/outputs/apk -type f -name "*.apk" | head -n 1)
+          cp "$APK_REPLACE" output_apks/PULSE-v1.19.6-replace-zh.apk
+
           ls -la output_apks/
 
       - name: Upload APK
@@ -53,14 +58,23 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.19.6-zh
-          name: "PULSE-zh v1.19.6 掌機繁體中文共存版"
+          name: "PULSE-zh v1.19.6 掌機繁體中文化版 (共存版 / 取代版)"
           body: |
-            ### 🎮 PULSE-zh v1.19.6 掌機繁體中文共存版
+            ### 🎮 PULSE-zh v1.19.6 掌機繁體中文化版
 
-            - **掌機獨立包名**：`com.kei.pulse.zh`（可與官方原版並存安裝，互不衝突）
             - **完整在地化**：100% 台灣繁體中文前端介面支援
             - **原生語系架構**：相容 Android 13+ 原生多語系熱切換
-          files: output_apks/PULSE-v1.19.6-zh.apk
+
+            #### 📦 版本選擇指南：
+            1. **`PULSE-v1.19.6-coexist-zh.apk`（獨立共存版）**
+               - **套件名稱**：`com.kei.pulse.zh`
+               - 可與原版 PULSE 並存安裝，設定與資料完全獨立。
+            2. **`PULSE-v1.19.6-replace-zh.apk`（原版取代版）**
+               - **套件名稱**：`com.kei.pulse`（同官方原版套件名稱）
+               - 可直接覆蓋取代原版，掌機前端、磁貼服務與系統背景監控無縫接軌！
+          files: |
+            output_apks/PULSE-v1.19.6-coexist-zh.apk
+            output_apks/PULSE-v1.19.6-replace-zh.apk
           draft: false
           prerelease: false
           make_latest: true

@@ -32,7 +32,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.kei.pulse.zh"
+        applicationId = (project.findProperty("customAppId") as String?) ?: "com.kei.pulse.zh"
         minSdk = 31
         targetSdk = 34
         versionCode = 303
