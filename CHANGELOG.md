@@ -4,6 +4,25 @@
 
 ---
 
+## 🔖 [MOD-20260921-10] 移除無版本號 APK 並統一 Releases 產物為 PULSE-v1.19.6-zh.apk
+
+* **修改日期**：2026-09-21
+* **目標分支**：`main-zh`
+* **修改分類**：`[CI/CD 部署管線微調 / Release 資源清理]`
+* **涉及檔案清單**：
+  * 修改：`.github/workflows/build.yml`
+  * 修改：`CHANGELOG.md`
+* **修改動機與問題**（Why）：
+  * Release `v1.19.6-zh` 中同時存在有版本號的 `PULSE-v1.19.6-zh.apk` 與未帶版本號的 `pulse-zh.apk`，造成下載選項混淆。
+* **技術方案與關鍵決策**（How）：
+  1. 透過 GitHub API 刪除 Release `v1.19.6-zh` 內無版本編號的資產 `pulse-zh.apk`（Asset ID: `579203627`），保留官方下載次數最高的完整版本 `PULSE-v1.19.6-zh.apk`。
+  2. 修改 `.github/workflows/build.yml` 的 APK 準備與發布步驟，統一命名產物為 `PULSE-v1.19.6-zh.apk`，確保後續雲端建置發布不再產生未帶版本號之冗餘產物。
+* **測試與驗證結果**（Verification）：
+  * GitHub Release 資產列表查核，目前僅保留 `PULSE-v1.19.6-zh.apk`（66.91 MB）。
+  * 工作流設定檢驗通過。
+
+---
+
 ## 🔖 [MOD-20260921-09] 新增 GitHub Releases 自動發布機制與 APK 正名歸檔
 
 * **修改日期**：2026-09-21

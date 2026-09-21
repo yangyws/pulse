@@ -35,10 +35,9 @@ jobs:
       - name: Prepare APK
         run: |
           mkdir -p output_apks
-          find app/build/outputs/apk -type f -name "*.apk" -exec cp {} output_apks/ \;
-          APK_FILE=$(find output_apks -name "*.apk" | head -n 1)
+          APK_FILE=$(find app/build/outputs/apk -type f -name "*.apk" | head -n 1)
           if [ -n "$APK_FILE" ]; then
-            cp "$APK_FILE" output_apks/pulse-zh.apk
+            cp "$APK_FILE" output_apks/PULSE-v1.19.6-zh.apk
           fi
           ls -la output_apks/
 
@@ -61,7 +60,7 @@ jobs:
             - **掌機獨立包名**：`com.kei.pulse.zh`（可與官方原版並存安裝，互不衝突）
             - **完整在地化**：100% 台灣繁體中文前端介面支援
             - **原生語系架構**：相容 Android 13+ 原生多語系熱切換
-          files: output_apks/pulse-zh.apk
+          files: output_apks/PULSE-v1.19.6-zh.apk
           draft: false
           prerelease: false
           make_latest: true
